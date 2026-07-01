@@ -50,114 +50,129 @@ function limparRelatorio() {
  */
 function gerarRelatorioFila(idInicio, idFim) {
 
+  // Lock
+  let lock;
+
   try {
 
-    console.log( "gerarRelatorioFila - Início" );
+    // TENTA PEGAR O LOCK
+    lock = LockService.getScriptLock();
+    lock.waitLock(10000);  
 
-    let caso;
-  
-    const relatorioCaso = new Array(NUM_COLUNAS_TABELA_RELATORIO).fill("");
-
-    // Percorre todos os casos da fila, gerando o relatório de cada caso
-    for( let idCaso=idInicio; idCaso<idFim; ++idCaso ) {
-    
-      caso = BUFFER_CASOS[idCaso - 1];
-  
-      relatorioCaso[0] = caso[ ID ];
-      relatorioCaso[1] = caso[ REFERENCIA_FAMILIAR ];
-      relatorioCaso[2] = caso[ TIPO_LOGRADOURO ];
-      relatorioCaso[3] = caso[ NOME_LOGRADOURO ];
-      relatorioCaso[4] = caso[ NUMERO ];
-      relatorioCaso[5] = caso[ COMPLEMENTO ];
-      relatorioCaso[6] = caso[ BAIRRO ];
-      relatorioCaso[7] = idsToNomes( caso[ REGIONAL ], "REGIONAIS" );
-      relatorioCaso[8] = caso[ CEP ];
-    
-      relatorioCaso[9] = caso[ TPSA ];
-      relatorioCaso[10] = caso[ DATA_DE_CHEGADA_NO_CREAS ];
-    
-      let orgaosEncaminhadores =  idsToNomes( caso[ ORGAOS_ENCAMINHADORES ], "ORGAOS_ENCAMINHADORES" );
-      if( orgaosEncaminhadores != "" ) {
-        orgaosEncaminhadores = orgaosEncaminhadores.replaceAll( ";", ";\n" );
-      } else {
-        orgaosEncaminhadores = "SEM INFORMAÇÃO";
-      }  
-      relatorioCaso[11] = orgaosEncaminhadores;
-    
-      relatorioCaso[12] = caso[ DATA_PREVISTA_PARA_RESPOSTA ];
-      relatorioCaso[13] = caso[ DATA_DA_ULTIMA_RESPOSTA ];  
-      relatorioCaso[14] = caso[ DATA_DE_DESIGNACAO ];
-  
-      relatorioCaso[15] = caso[ MOTIVO_DE_DESIGNACAO ] != "" ? 
-                          idsToNomes( caso[ MOTIVO_DE_DESIGNACAO ], "MOTIVOS_DE_DESIGNACAO" ) : 
-                          "NÃO DESIGNADO";
-    
-      relatorioCaso[16] = caso[ TOTAL_DE_PONTOS ];
-      relatorioCaso[17] = caso[ TEMPO_DE_ESPERA ];
-    
-      let violacoes =  idsToNomes( caso[ VIOLACOES_CASO ], "VIOLACOES" );
-      if( violacoes != "" ) {
-        violacoes = violacoes.replaceAll( ";", ";\n" );
-      } else {
-        violacoes = "SEM INFORMAÇÃO";
-      }
-      relatorioCaso[18] = violacoes;
-    
-      let categorias =  idsToNomes( caso[ CATEGORIAS_CASO ], "CATEGORIAS" );
-      if( categorias != "" ) {
-        categorias = categorias.replaceAll( ";", ";\n" );
-      } else {
-        categorias = "SEM INFORMAÇÃO";
-      }  
-      relatorioCaso[19] = categorias;
-    
-      relatorioCaso[20] = caso[ PONTUACAO_PARAMETROS_CASO ];  
-    
-      let parametros =  idsToNomes( caso[ PARAMETROS_CASO ], "PARAMETROS" );
-      if( parametros != "" ) {
-        parametros = parametros.replaceAll( ";", ";\n" );
-      } else {
-        parametros = "SEM INFORMAÇÃO";
-      }
-      relatorioCaso[21] = parametros;  
-    
-      relatorioCaso[22] = caso[ OBSERVACAO ];    
-      relatorioCaso[23] = caso[ ID_TECNICO_PAEFI ] != "" ? 
-                          idsToNomes( caso[ ID_TECNICO_PAEFI ], "TECNICOS" ) : 
-                          "SEM INFORMAÇÃO";
+    // SE PEGAR O LOCK, PROSSEGUE COM A DESIGNAÇÃO
+    if( lock.hasLock() ) {
       
-      TABELA_RELATORIO.appendRow( relatorioCaso );
+      console.log( "gerarRelatorioFila - Início" );
+  
+      let caso;
+    
+      const relatorioCaso = new Array(NUM_COLUNAS_TABELA_RELATORIO).fill("");
+  
+      // Percorre todos os casos da fila, gerando o relatório de cada caso
+      for( let idCaso=idInicio; idCaso<idFim; ++idCaso ) {
+      
+        caso = BUFFER_CASOS[idCaso - 1];
+    
+        relatorioCaso[0] = caso[ ID ];
+        relatorioCaso[1] = caso[ REFERENCIA_FAMILIAR ];
+        relatorioCaso[2] = caso[ TIPO_LOGRADOURO ];
+        relatorioCaso[3] = caso[ NOME_LOGRADOURO ];
+        relatorioCaso[4] = caso[ NUMERO ];
+        relatorioCaso[5] = caso[ COMPLEMENTO ];
+        relatorioCaso[6] = caso[ BAIRRO ];
+        relatorioCaso[7] = idsToNomes( caso[ REGIONAL ], "REGIONAIS" );
+        relatorioCaso[8] = caso[ CEP ];
+      
+        relatorioCaso[9] = caso[ TPSA ];
+        relatorioCaso[10] = caso[ DATA_DE_CHEGADA_NO_CREAS ];
+      
+        let orgaosEncaminhadores =  idsToNomes( caso[ ORGAOS_ENCAMINHADORES ], "ORGAOS_ENCAMINHADORES" );
+        if( orgaosEncaminhadores != "" ) {
+          orgaosEncaminhadores = orgaosEncaminhadores.replaceAll( ";", ";\n" );
+        } else {
+          orgaosEncaminhadores = "SEM INFORMAÇÃO";
+        }  
+        relatorioCaso[11] = orgaosEncaminhadores;
+      
+        relatorioCaso[12] = caso[ DATA_PREVISTA_PARA_RESPOSTA ];
+        relatorioCaso[13] = caso[ DATA_DA_ULTIMA_RESPOSTA ];  
+        relatorioCaso[14] = caso[ DATA_DE_DESIGNACAO ];
+    
+        relatorioCaso[15] = caso[ MOTIVO_DE_DESIGNACAO ] != "" ? 
+                            idsToNomes( caso[ MOTIVO_DE_DESIGNACAO ], "MOTIVOS_DE_DESIGNACAO" ) : 
+                            "NÃO DESIGNADO";
+      
+        relatorioCaso[16] = caso[ TOTAL_DE_PONTOS ];
+        relatorioCaso[17] = caso[ TEMPO_DE_ESPERA ];
+      
+        let violacoes =  idsToNomes( caso[ VIOLACOES_CASO ], "VIOLACOES" );
+        if( violacoes != "" ) {
+          violacoes = violacoes.replaceAll( ";", ";\n" );
+        } else {
+          violacoes = "SEM INFORMAÇÃO";
+        }
+        relatorioCaso[18] = violacoes;
+      
+        let categorias =  idsToNomes( caso[ CATEGORIAS_CASO ], "CATEGORIAS" );
+        if( categorias != "" ) {
+          categorias = categorias.replaceAll( ";", ";\n" );
+        } else {
+          categorias = "SEM INFORMAÇÃO";
+        }  
+        relatorioCaso[19] = categorias;
+      
+        relatorioCaso[20] = caso[ PONTUACAO_PARAMETROS_CASO ];  
+      
+        let parametros =  idsToNomes( caso[ PARAMETROS_CASO ], "PARAMETROS" );
+        if( parametros != "" ) {
+          parametros = parametros.replaceAll( ";", ";\n" );
+        } else {
+          parametros = "SEM INFORMAÇÃO";
+        }
+        relatorioCaso[21] = parametros;  
+      
+        relatorioCaso[22] = caso[ OBSERVACAO ];    
+        relatorioCaso[23] = caso[ ID_TECNICO_PAEFI ] != "" ? 
+                            idsToNomes( caso[ ID_TECNICO_PAEFI ], "TECNICOS" ) : 
+                            "SEM INFORMAÇÃO";
+        
+        TABELA_RELATORIO.appendRow( relatorioCaso );
+  
+      } // Fim do for que percorre todos os casos da fila
+  
+      PLANILHA_RELATORIO.waitForAllDataExecutionsCompletion(2);      
+      SpreadsheetApp.flush();  
+  
+      console.log( "gerarRelatorioFila - Fim" );
 
-    } // Fim do for que percorre todos os casos da fila
 
-    PLANILHA_RELATORIO.waitForAllDataExecutionsCompletion(2);      
-    SpreadsheetApp.flush();  
+    } else {
 
-    console.log( "gerarRelatorioFila - Fim" );
+      // SE NAO CONSEGUIR PEGAR O LOCK, LANCA UMA EXCESSAO
+      throw( new Error( "Nao foi possivel pegar o LOCK" ) );
+    }
 
 
   } catch( error ) {
+
     throw( "gerarRelatorioFila: " + error.message );
-  }    
+
+  } finally {
+
+    // SOLTA O LOCK
+    lock.releaseLock();    
+  }   
 
 
 } // Fim da função gerarRelatorioFila
 
 
-function gerarRelatorio_1_500() {
-  gerarRelatorioFila( 1, 500 );
+function gerarRelatorio_1_999() {
+  gerarRelatorioFila( 1, 1000 );
 }
 
-function gerarRelatorio_501_1000() {
-  gerarRelatorioFila( 500, 1000 );
-}
-
-function gerarRelatorio_1001_1500() {
-  gerarRelatorioFila( 1000, 1500 );
-}
-
-function gerarRelatorio_1501_NUM_CASOS() {
-  gerarRelatorioFila( 1500, NUM_CASOS );
+function gerarRelatorio_1000_NUM_CASOS() {
+  gerarRelatorioFila( 1000, NUM_CASOS+1 );
 }
 
 
@@ -171,8 +186,8 @@ function getRelatorioExel() {
   try {
 
     console.log( "getRelatorioExel - Início" );
-    limparRelatorio();  
-    gerarRelatorioFilaBE();
+//    limparRelatorio();  
+//    gerarRelatorioFilaBE();
     console.log( "getRelatorioExel - Fim" );
 
   } catch( error ) {

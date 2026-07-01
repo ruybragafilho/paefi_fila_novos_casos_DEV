@@ -50,7 +50,17 @@ function reativarCasoBE( id ) {
 
     // Grava null no id do técnico do PAEFI
     const idTecnico = TABELA_CASOS.getRange( idCaso+1, ID_TECNICO_PAEFI+1 );
-    idTecnico.setValue( "" );            
+    idTecnico.setValue( "" );     
+    
+    // Calcula e insere, na tabela, o tempo de espera em meses  
+    // A função getRange endereça as linhas e colunas começando do indice 1
+    // Por isso os +1 na linha e na coluna  
+    try {
+      const dataDeChegadaNoCREAS = TABELA_CASOS.getRange( idCaso+1, DATA_DE_CHEGADA_NO_CREAS+1 ).getA1Notation();  
+      TABELA_CASOS.getRange( idCaso+1, TEMPO_DE_ESPERA+1 ).setFormula(`=DATEDIF(${dataDeChegadaNoCREAS};Today();"M")`);
+    } catch( error ) {
+      throw( error.message );
+    }    
 
     // SOLTA O LOCK
     lock.releaseLock();
