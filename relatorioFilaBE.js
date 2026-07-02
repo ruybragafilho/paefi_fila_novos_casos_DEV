@@ -73,7 +73,7 @@ function limparRelatorio() {
  * Função que gera os relatórios de todos os casos da fila, 
  * gravando-os na planilha RELATORIO
  */
-function gerarRelatorio() {
+function gerarRelatorio( regional ) {
 
   // Lock
   let lock;
@@ -99,73 +99,77 @@ function gerarRelatorio() {
       for( let idCaso=1; idCaso<=NUM_CASOS; ++idCaso ) {
       
         caso = BUFFER_CASOS[idCaso - 1];
-    
-        bufferRelatorioCaso = new Array(NUM_COLUNAS_TABELA_RELATORIO).fill("");
 
-        bufferRelatorioCaso[0] = caso[ ID ];
-        bufferRelatorioCaso[1] = caso[ REFERENCIA_FAMILIAR ];
-        bufferRelatorioCaso[2] = caso[ TIPO_LOGRADOURO ];
-        bufferRelatorioCaso[3] = caso[ NOME_LOGRADOURO ];
-        bufferRelatorioCaso[4] = caso[ NUMERO ];
-        bufferRelatorioCaso[5] = caso[ COMPLEMENTO ];
-        bufferRelatorioCaso[6] = caso[ BAIRRO ];
-        bufferRelatorioCaso[7] = idsToNomes( caso[ REGIONAL ], "REGIONAIS" );
-        bufferRelatorioCaso[8] = caso[ CEP ];
-      
-        bufferRelatorioCaso[9] = caso[ TPSA ];
-        bufferRelatorioCaso[10] = caso[ DATA_DE_CHEGADA_NO_CREAS ];
-      
-        let orgaosEncaminhadores =  idsToNomes( caso[ ORGAOS_ENCAMINHADORES ], "ORGAOS_ENCAMINHADORES" );
-        if( orgaosEncaminhadores != "" ) {
-          orgaosEncaminhadores = orgaosEncaminhadores.replaceAll( ";", ";\n" );
-        } else {
-          orgaosEncaminhadores = "SEM INFORMAÇÃO";
-        }  
-        bufferRelatorioCaso[11] = orgaosEncaminhadores;
-      
-        bufferRelatorioCaso[12] = caso[ DATA_PREVISTA_PARA_RESPOSTA ];
-        bufferRelatorioCaso[13] = caso[ DATA_DA_ULTIMA_RESPOSTA ];  
-        bufferRelatorioCaso[14] = caso[ DATA_DE_DESIGNACAO ];
-    
-        bufferRelatorioCaso[15] = caso[ MOTIVO_DE_DESIGNACAO ] != "" ? 
-                            idsToNomes( caso[ MOTIVO_DE_DESIGNACAO ], "MOTIVOS_DE_DESIGNACAO" ) : 
-                            "NÃO DESIGNADO";
-      
-        bufferRelatorioCaso[16] = caso[ TOTAL_DE_PONTOS ];
-        bufferRelatorioCaso[17] = caso[ TEMPO_DE_ESPERA ];
-      
-        let violacoes =  idsToNomes( caso[ VIOLACOES_CASO ], "VIOLACOES" );
-        if( violacoes != "" ) {
-          violacoes = violacoes.replaceAll( ";", ";\n" );
-        } else {
-          violacoes = "SEM INFORMAÇÃO";
-        }
-        bufferRelatorioCaso[18] = violacoes;
-      
-        let categorias =  idsToNomes( caso[ CATEGORIAS_CASO ], "CATEGORIAS" );
-        if( categorias != "" ) {
-          categorias = categorias.replaceAll( ";", ";\n" );
-        } else {
-          categorias = "SEM INFORMAÇÃO";
-        }  
-        bufferRelatorioCaso[19] = categorias;
-      
-        bufferRelatorioCaso[20] = caso[ PONTUACAO_PARAMETROS_CASO ];  
-      
-        let parametros =  idsToNomes( caso[ PARAMETROS_CASO ], "PARAMETROS" );
-        if( parametros != "" ) {
-          parametros = parametros.replaceAll( ";", ";\n" );
-        } else {
-          parametros = "SEM INFORMAÇÃO";
-        }
-        bufferRelatorioCaso[21] = parametros;  
-      
-        bufferRelatorioCaso[22] = caso[ OBSERVACAO ];    
-        bufferRelatorioCaso[23] = caso[ ID_TECNICO_PAEFI ] != "" ? 
-                            idsToNomes( caso[ ID_TECNICO_PAEFI ], "TECNICOS" ) : 
-                            "SEM INFORMAÇÃO";
+        if( caso[REGIONAL] == regional  ||  regional == "0" ) {
+
+          bufferRelatorioCaso = new Array(NUM_COLUNAS_TABELA_RELATORIO).fill("");
+  
+          bufferRelatorioCaso[0] = caso[ ID ];
+          bufferRelatorioCaso[1] = caso[ REFERENCIA_FAMILIAR ];
+          bufferRelatorioCaso[2] = caso[ TIPO_LOGRADOURO ];
+          bufferRelatorioCaso[3] = caso[ NOME_LOGRADOURO ];
+          bufferRelatorioCaso[4] = caso[ NUMERO ];
+          bufferRelatorioCaso[5] = caso[ COMPLEMENTO ];
+          bufferRelatorioCaso[6] = caso[ BAIRRO ];
+          bufferRelatorioCaso[7] = idsToNomes( caso[ REGIONAL ], "REGIONAIS" );
+          bufferRelatorioCaso[8] = caso[ CEP ];
         
-        relatorio.push( bufferRelatorioCaso );
+          bufferRelatorioCaso[9] = caso[ TPSA ];
+          bufferRelatorioCaso[10] = caso[ DATA_DE_CHEGADA_NO_CREAS ];
+        
+          let orgaosEncaminhadores =  idsToNomes( caso[ ORGAOS_ENCAMINHADORES ], "ORGAOS_ENCAMINHADORES" );
+          if( orgaosEncaminhadores != "" ) {
+            orgaosEncaminhadores = orgaosEncaminhadores.replaceAll( ";", ";\n" );
+          } else {
+            orgaosEncaminhadores = "SEM INFORMAÇÃO";
+          }  
+          bufferRelatorioCaso[11] = orgaosEncaminhadores;
+        
+          bufferRelatorioCaso[12] = caso[ DATA_PREVISTA_PARA_RESPOSTA ];
+          bufferRelatorioCaso[13] = caso[ DATA_DA_ULTIMA_RESPOSTA ];  
+          bufferRelatorioCaso[14] = caso[ DATA_DE_DESIGNACAO ];
+      
+          bufferRelatorioCaso[15] = caso[ MOTIVO_DE_DESIGNACAO ] != "" ? 
+                              idsToNomes( caso[ MOTIVO_DE_DESIGNACAO ], "MOTIVOS_DE_DESIGNACAO" ) : 
+                              "NÃO DESIGNADO";
+        
+          bufferRelatorioCaso[16] = caso[ TOTAL_DE_PONTOS ];
+          bufferRelatorioCaso[17] = caso[ TEMPO_DE_ESPERA ];
+        
+          let violacoes =  idsToNomes( caso[ VIOLACOES_CASO ], "VIOLACOES" );
+          if( violacoes != "" ) {
+            violacoes = violacoes.replaceAll( ";", ";\n" );
+          } else {
+            violacoes = "SEM INFORMAÇÃO";
+          }
+          bufferRelatorioCaso[18] = violacoes;
+        
+          let categorias =  idsToNomes( caso[ CATEGORIAS_CASO ], "CATEGORIAS" );
+          if( categorias != "" ) {
+            categorias = categorias.replaceAll( ";", ";\n" );
+          } else {
+            categorias = "SEM INFORMAÇÃO";
+          }  
+          bufferRelatorioCaso[19] = categorias;
+        
+          bufferRelatorioCaso[20] = caso[ PONTUACAO_PARAMETROS_CASO ];  
+        
+          let parametros =  idsToNomes( caso[ PARAMETROS_CASO ], "PARAMETROS" );
+          if( parametros != "" ) {
+            parametros = parametros.replaceAll( ";", ";\n" );
+          } else {
+            parametros = "SEM INFORMAÇÃO";
+          }
+          bufferRelatorioCaso[21] = parametros;  
+        
+          bufferRelatorioCaso[22] = caso[ OBSERVACAO ];    
+          bufferRelatorioCaso[23] = caso[ ID_TECNICO_PAEFI ] != "" ? 
+                              idsToNomes( caso[ ID_TECNICO_PAEFI ], "TECNICOS" ) : 
+                              "SEM INFORMAÇÃO";
+          
+          relatorio.push( bufferRelatorioCaso );
+
+        }
         
   
       } // Fim do for que percorre todos os casos da fila
@@ -273,7 +277,7 @@ function getRelatorioExel() {
 
     console.log( "getRelatorioExel - Início" );
     limparRelatorio();  
-    gerarRelatorio();    
+    gerarRelatorio( usuarioLogado.regional );    
     console.log( "getRelatorioExel - Fim" );
 
     return `https://docs.google.com/spreadsheets/d/${PLANILHA_RELATORIO_ID}/export?format=xlsx`;
