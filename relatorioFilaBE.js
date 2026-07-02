@@ -11,33 +11,57 @@ const NUM_COLUNAS_TABELA_RELATORIO  =  24;
 
 
 
-
 /**
  * Função que limpa a planilha RELATORIO
  */
 function limparRelatorio() {
 
+  // Lock
+  let lock;
+
   try {
 
-    console.log( "limparRelatorio - Início" );
+    // TENTA PEGAR O LOCK
+    lock = LockService.getScriptLock();
+    lock.waitLock(10000);  
 
-    // Caso nulo
-    let casoNulo = new Array(NUM_COLUNAS_TABELA_RELATORIO).fill("");
+    // SE PEGAR O LOCK, PROSSEGUE COM A DESIGNAÇÃO
+    if( lock.hasLock() ) {
+
+      console.log( "limparRelatorio - Início" );
   
-    // Limpa a fila
-    let range;
-    for( let linha=2; linha<=NUM_RELATORIOS+1; ++linha ) {
-      range = TABELA_RELATORIO.getRange( linha, 1, 1, NUM_COLUNAS_TABELA_RELATORIO );
-      range.setValues([casoNulo]);
-    }    
+      // Caso nulo
+      let casoNulo = new Array(NUM_COLUNAS_TABELA_RELATORIO).fill("");
+      let bufferCasosNulos = [];
     
-    PLANILHA_RELATORIO.waitForAllDataExecutionsCompletion(2);      
-    SpreadsheetApp.flush();  
+      // Limpa a fila
+      let range;
+      for( let linha=2; linha<=NUM_RELATORIOS+1; ++linha ) {
+        bufferCasosNulos.push(casoNulo);
+      }    
+      
+      
+      // Grava o buffer de casos nulos na planilha RELATORIO
+      TABELA_RELATORIO.getRange( 2, 1, bufferCasosNulos.length, NUM_COLUNAS_TABELA_RELATORIO ).setValues( bufferCasosNulos );  
+      PLANILHA_RELATORIO.waitForAllDataExecutionsCompletion(2);      
+      SpreadsheetApp.flush();  
+  
+      console.log( "limparRelatorio - Fim" );
 
-    console.log( "limparRelatorio - Fim" );
+    } else {
+
+      // SE NAO CONSEGUIR PEGAR O LOCK, LANCA UMA EXCESSAO
+      throw( new Error( "Nao foi possivel pegar o LOCK" ) );
+    }
 
   } catch( error ) {
+
     throw( "limparRelatorio: " + error.message );
+
+  } finally {
+
+    // SOLTA O LOCK
+    lock.releaseLock();    
   }    
 
 } // Fim da função limparRelatorio
@@ -48,7 +72,7 @@ function limparRelatorio() {
  * Função que gera os relatórios de todos os casos da fila, 
  * gravando-os na planilha RELATORIO
  */
-function gerarRelatorioFila(idInicio, idFim) {
+function gerarRelatorio() {
 
   // Lock
   let lock;
@@ -66,25 +90,29 @@ function gerarRelatorioFila(idInicio, idFim) {
   
       let caso;
     
-      const relatorioCaso = new Array(NUM_COLUNAS_TABELA_RELATORIO).fill("");
+      let bufferRelatorioCaso;
+
+      const relatorio = [];
   
       // Percorre todos os casos da fila, gerando o relatório de cada caso
-      for( let idCaso=idInicio; idCaso<idFim; ++idCaso ) {
+      for( let idCaso=1; idCaso<=NUM_CASOS; ++idCaso ) {
       
         caso = BUFFER_CASOS[idCaso - 1];
     
-        relatorioCaso[0] = caso[ ID ];
-        relatorioCaso[1] = caso[ REFERENCIA_FAMILIAR ];
-        relatorioCaso[2] = caso[ TIPO_LOGRADOURO ];
-        relatorioCaso[3] = caso[ NOME_LOGRADOURO ];
-        relatorioCaso[4] = caso[ NUMERO ];
-        relatorioCaso[5] = caso[ COMPLEMENTO ];
-        relatorioCaso[6] = caso[ BAIRRO ];
-        relatorioCaso[7] = idsToNomes( caso[ REGIONAL ], "REGIONAIS" );
-        relatorioCaso[8] = caso[ CEP ];
+        bufferRelatorioCaso = new Array(NUM_COLUNAS_TABELA_RELATORIO).fill("");
+
+        bufferRelatorioCaso[0] = caso[ ID ];
+        bufferRelatorioCaso[1] = caso[ REFERENCIA_FAMILIAR ];
+        bufferRelatorioCaso[2] = caso[ TIPO_LOGRADOURO ];
+        bufferRelatorioCaso[3] = caso[ NOME_LOGRADOURO ];
+        bufferRelatorioCaso[4] = caso[ NUMERO ];
+        bufferRelatorioCaso[5] = caso[ COMPLEMENTO ];
+        bufferRelatorioCaso[6] = caso[ BAIRRO ];
+        bufferRelatorioCaso[7] = idsToNomes( caso[ REGIONAL ], "REGIONAIS" );
+        bufferRelatorioCaso[8] = caso[ CEP ];
       
-        relatorioCaso[9] = caso[ TPSA ];
-        relatorioCaso[10] = caso[ DATA_DE_CHEGADA_NO_CREAS ];
+        bufferRelatorioCaso[9] = caso[ TPSA ];
+        bufferRelatorioCaso[10] = caso[ DATA_DE_CHEGADA_NO_CREAS ];
       
         let orgaosEncaminhadores =  idsToNomes( caso[ ORGAOS_ENCAMINHADORES ], "ORGAOS_ENCAMINHADORES" );
         if( orgaosEncaminhadores != "" ) {
@@ -92,18 +120,18 @@ function gerarRelatorioFila(idInicio, idFim) {
         } else {
           orgaosEncaminhadores = "SEM INFORMAÇÃO";
         }  
-        relatorioCaso[11] = orgaosEncaminhadores;
+        bufferRelatorioCaso[11] = orgaosEncaminhadores;
       
-        relatorioCaso[12] = caso[ DATA_PREVISTA_PARA_RESPOSTA ];
-        relatorioCaso[13] = caso[ DATA_DA_ULTIMA_RESPOSTA ];  
-        relatorioCaso[14] = caso[ DATA_DE_DESIGNACAO ];
+        bufferRelatorioCaso[12] = caso[ DATA_PREVISTA_PARA_RESPOSTA ];
+        bufferRelatorioCaso[13] = caso[ DATA_DA_ULTIMA_RESPOSTA ];  
+        bufferRelatorioCaso[14] = caso[ DATA_DE_DESIGNACAO ];
     
-        relatorioCaso[15] = caso[ MOTIVO_DE_DESIGNACAO ] != "" ? 
+        bufferRelatorioCaso[15] = caso[ MOTIVO_DE_DESIGNACAO ] != "" ? 
                             idsToNomes( caso[ MOTIVO_DE_DESIGNACAO ], "MOTIVOS_DE_DESIGNACAO" ) : 
                             "NÃO DESIGNADO";
       
-        relatorioCaso[16] = caso[ TOTAL_DE_PONTOS ];
-        relatorioCaso[17] = caso[ TEMPO_DE_ESPERA ];
+        bufferRelatorioCaso[16] = caso[ TOTAL_DE_PONTOS ];
+        bufferRelatorioCaso[17] = caso[ TEMPO_DE_ESPERA ];
       
         let violacoes =  idsToNomes( caso[ VIOLACOES_CASO ], "VIOLACOES" );
         if( violacoes != "" ) {
@@ -111,7 +139,7 @@ function gerarRelatorioFila(idInicio, idFim) {
         } else {
           violacoes = "SEM INFORMAÇÃO";
         }
-        relatorioCaso[18] = violacoes;
+        bufferRelatorioCaso[18] = violacoes;
       
         let categorias =  idsToNomes( caso[ CATEGORIAS_CASO ], "CATEGORIAS" );
         if( categorias != "" ) {
@@ -119,9 +147,9 @@ function gerarRelatorioFila(idInicio, idFim) {
         } else {
           categorias = "SEM INFORMAÇÃO";
         }  
-        relatorioCaso[19] = categorias;
+        bufferRelatorioCaso[19] = categorias;
       
-        relatorioCaso[20] = caso[ PONTUACAO_PARAMETROS_CASO ];  
+        bufferRelatorioCaso[20] = caso[ PONTUACAO_PARAMETROS_CASO ];  
       
         let parametros =  idsToNomes( caso[ PARAMETROS_CASO ], "PARAMETROS" );
         if( parametros != "" ) {
@@ -129,29 +157,31 @@ function gerarRelatorioFila(idInicio, idFim) {
         } else {
           parametros = "SEM INFORMAÇÃO";
         }
-        relatorioCaso[21] = parametros;  
+        bufferRelatorioCaso[21] = parametros;  
       
-        relatorioCaso[22] = caso[ OBSERVACAO ];    
-        relatorioCaso[23] = caso[ ID_TECNICO_PAEFI ] != "" ? 
+        bufferRelatorioCaso[22] = caso[ OBSERVACAO ];    
+        bufferRelatorioCaso[23] = caso[ ID_TECNICO_PAEFI ] != "" ? 
                             idsToNomes( caso[ ID_TECNICO_PAEFI ], "TECNICOS" ) : 
                             "SEM INFORMAÇÃO";
         
-        TABELA_RELATORIO.appendRow( relatorioCaso );
+        relatorio.push( bufferRelatorioCaso );
+        
   
       } // Fim do for que percorre todos os casos da fila
   
+
+      // Grava o buffer do relatório na planilha RELATORIO
+      TABELA_RELATORIO.getRange( 2, 1, relatorio.length, NUM_COLUNAS_TABELA_RELATORIO ).setValues( relatorio );
       PLANILHA_RELATORIO.waitForAllDataExecutionsCompletion(2);      
       SpreadsheetApp.flush();  
   
       console.log( "gerarRelatorioFila - Fim" );
-
 
     } else {
 
       // SE NAO CONSEGUIR PEGAR O LOCK, LANCA UMA EXCESSAO
       throw( new Error( "Nao foi possivel pegar o LOCK" ) );
     }
-
 
   } catch( error ) {
 
@@ -163,17 +193,7 @@ function gerarRelatorioFila(idInicio, idFim) {
     lock.releaseLock();    
   }   
 
-
-} // Fim da função gerarRelatorioFila
-
-
-function gerarRelatorio_1_999() {
-  gerarRelatorioFila( 1, 1000 );
-}
-
-function gerarRelatorio_1000_NUM_CASOS() {
-  gerarRelatorioFila( 1000, NUM_CASOS+1 );
-}
+} // Fim da função gerarRelatorio
 
 
 
@@ -183,15 +203,33 @@ function gerarRelatorio_1000_NUM_CASOS() {
  */
 function getRelatorioExel() {
 
+
+  // Verifica se o usuário do app tem permissão para obter o relatório
+  let usuarioLogado;
+  try {
+    usuarioLogado = JSON.parse( autenticarUsuario() );
+  } catch( error ) {
+    throw( "getRelatorioExel: " + error.message );
+  }    
+  if( usuarioLogado.tipo != "2" && usuarioLogado.tipo != "0" ) {
+    throw( new Error( "Usuário sem permissão para gerar o relatório" ) );
+  }    
+
+
   try {
 
     console.log( "getRelatorioExel - Início" );
-//    limparRelatorio();  
-//    gerarRelatorioFilaBE();
+    limparRelatorio();  
+    gerarRelatorio();
     console.log( "getRelatorioExel - Fim" );
+
+    return `https://docs.google.com/spreadsheets/d/${PLANILHA_RELATORIO_ID}/export?format=xlsx`;
 
   } catch( error ) {
     throw( "getRelatorioExel: " + error.message );
   }    
 
 } // Fim da função getRelatorioExel
+
+
+

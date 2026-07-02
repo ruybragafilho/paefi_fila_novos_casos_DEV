@@ -1,0 +1,50 @@
+<script>
+
+  "use strict";
+  
+  /**
+   * Função frontend que obtém o relatório de todos os casos da fila, retornando-o como xlsx
+   */  
+  function relatorioFilaFE() {
+
+    // Mensagem de debug
+    console.log( "relatorioFilaFE - INÍCIO" ); 
+
+    // Mostra modal com mensagem de geração de relatório
+    mostrarModalMensagem( "Gerando relatório, por favor aguarde..." );                
+
+    // Chama função do Apps Script para reativar um caso
+    google.script.run
+                 .withSuccessHandler( (relatorio) => {
+
+                   // Volta para a tela de resumos de casos
+                   console.log( "relatorioFilaFE - SuccessHandler" );
+                   console.log( "Relatório: " + relatorio );
+
+                   // Esconde modal de mensagem
+                   modalMensagem.hide();   
+                   
+                   return relatorio;                   
+
+                 })
+                 .withFailureHandler( erro => {
+
+                   // Esconde modal de mensagem
+                   modalMensagem.hide();   
+
+                   // mostra modal com mensagem de erro
+                   console.log( "relatorioFilaFE - FailureHandler: " + erro.message );
+                   mostrarModalErro( "relatorioFilaFE - FailureHandler: " + erro.message );                   
+
+                 })
+                 // Chama a função backend que gera e retorna o relatório
+                 .getRelatorioExel( );  
+
+
+    // Mensagem de debug
+    console.log( "relatorioFilaFE - FIM" );                                                               
+
+  } // Fim da função relatorioFilaFE
+
+
+</script>
