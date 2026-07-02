@@ -11,20 +11,33 @@
     console.log( "relatorioFilaFE - INÍCIO" ); 
 
     // Mostra modal com mensagem de geração de relatório
-    mostrarModalMensagem( "Gerando relatório, por favor aguarde..." );                
+    mostrarModalMensagem( "Gerando relatório, por favor aguarde..." );      
+    document.getElementById("botaoGerarRelatorio").disabled = true;          
 
     // Chama função do Apps Script para reativar um caso
     google.script.run
-                 .withSuccessHandler( (relatorio) => {
+                 .withSuccessHandler( (urlRelatorio) => {
 
                    // Volta para a tela de resumos de casos
                    console.log( "relatorioFilaFE - SuccessHandler" );
-                   console.log( "Relatório: " + relatorio );
 
                    // Esconde modal de mensagem
                    modalMensagem.hide();   
+
+                   // Abre a planilha
+                   console.log("Gerar link - Início");
+
+                   const link = document.createElement('a');
+                   link.href = urlRelatorio;
+                   link.target = "_blank"
+                   link.download = 'RELATÓRIO_FILA_PAEFI.xlsx';
+
+                   document.body.appendChild(link);
+                   link.click();
+                   document.body.removeChild(link);
+                   document.getElementById("botaoGerarRelatorio").disabled = false;          
                    
-                   return relatorio;                   
+                   console.log("Gerar link - Fim");                                
 
                  })
                  .withFailureHandler( erro => {

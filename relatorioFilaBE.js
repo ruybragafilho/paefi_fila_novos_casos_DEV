@@ -5,6 +5,7 @@ const PLANILHA_RELATORIO_ID     =  "1dKDF-AFro9pju-U97LfH6pw5bVsHH-6pvdUzXwq_Wtg
 const PLANILHA_RELATORIO        =  SpreadsheetApp.openById(PLANILHA_RELATORIO_ID);
 
 const TABELA_RELATORIO          =  PLANILHA_RELATORIO.getSheetByName('RELATORIO');
+const TABELA_QUANTITATIVOS      =  PLANILHA_RELATORIO.getSheetByName('QUANTITATIVOS');
 let BUFFER_RELATORIO            =  TABELA_RELATORIO.getDataRange().getDisplayValues().splice(1);
 let NUM_RELATORIOS              =  BUFFER_RELATORIO.length;
 const NUM_COLUNAS_TABELA_RELATORIO  =  24;
@@ -25,7 +26,7 @@ function limparRelatorio() {
     lock = LockService.getScriptLock();
     lock.waitLock(10000);  
 
-    // SE PEGAR O LOCK, PROSSEGUE COM A DESIGNAÇÃO
+    // SE PEGAR O LOCK, PROSSEGUE A EXCLUSÃO DOS DADOS DO RELATÓRIO
     if( lock.hasLock() ) {
 
       console.log( "limparRelatorio - Início" );
@@ -83,7 +84,7 @@ function gerarRelatorio() {
     lock = LockService.getScriptLock();
     lock.waitLock(10000);  
 
-    // SE PEGAR O LOCK, PROSSEGUE COM A DESIGNAÇÃO
+    // SE PEGAR O LOCK, PROSSEGUE COM A GERAÇÃO DOS DADOS DO RELATÓRIO
     if( lock.hasLock() ) {
       
       console.log( "gerarRelatorioFila - Início" );
@@ -174,6 +175,8 @@ function gerarRelatorio() {
       TABELA_RELATORIO.getRange( 2, 1, relatorio.length, NUM_COLUNAS_TABELA_RELATORIO ).setValues( relatorio );
       PLANILHA_RELATORIO.waitForAllDataExecutionsCompletion(2);      
       SpreadsheetApp.flush();  
+
+      calcularQuantitativos( relatorio );
   
       console.log( "gerarRelatorioFila - Fim" );
 
@@ -198,6 +201,59 @@ function gerarRelatorio() {
 
 
 /**
+ * Função que calcula dados quantitativos do relatório
+ */
+function calcularQuantitativos( relatorio ) {
+
+
+  console.log( "calcularQuantitativos - Início" );  
+
+  // Números de casos
+  let numTotalDeCasos  = NUM_CASOS;
+  let numCasosAtivos   = relatorio.filter( caso => { return caso[15] == "NÃO DESIGNADO" } ).length;
+  let numCasosInativos = numTotalDeCasos - numCasosAtivos;
+   
+   
+  // Data do caso ativo mais antigo
+  let casosAtivos = relatorio.filter( caso => { return caso[15] == "NÃO DESIGNADO" } );
+  let datasCasosAtivos = casosAtivos.map( caso => {
+                                             let auxData = caso[10].split("/");
+                                             let data = new Date( auxData[2], parseInt(auxData[1])-1, auxData[0] );
+                                             return data; 
+                                         });
+  let dataCasoAtivoMaisAntigo = datasCasosAtivos.reduce( (maisAntiga, atual) => {
+                                                          return atual < maisAntiga ? atual : maisAntiga;
+                                                       });   
+  let dataFormatada = `${dataCasoAtivoMaisAntigo.getDate()}/${parseInt(dataCasoAtivoMaisAntigo.getMonth())+1}/${dataCasoAtivoMaisAntigo.getFullYear()} `;  
+   
+   
+  // Médias dos tempos de espera
+  let mediaTempoEsperaTodosOsCasos  = relatorio.reduce((acumulador, caso) => acumulador + parseInt(caso[17]), 0) / numTotalDeCasos; 
+  let mediaTempoEsperaCasosAtivos   = relatorio.filter( caso => { return caso[15] == "NÃO DESIGNADO" } ).reduce((acumulador, caso) => acumulador + parseInt(caso[17]), 0) / numCasosAtivos;
+  let mediaTempoEsperaCasosInativos = relatorio.filter( caso => { return caso[15] != "NÃO DESIGNADO" } ).reduce((acumulador, caso) => acumulador + parseInt(caso[17]), 0) / numCasosInativos;
+   
+   
+  // Grava os dados quantitativos na tabela QUANTITATIVOS   
+  TABELA_QUANTITATIVOS.getRange( 'B2' ).setValue( numTotalDeCasos );
+  TABELA_QUANTITATIVOS.getRange( 'B3' ).setValue( numCasosInativos );
+  TABELA_QUANTITATIVOS.getRange( 'B4' ).setValue( numCasosAtivos );
+  TABELA_QUANTITATIVOS.getRange( 'B5' ).setValue( dataFormatada );
+  TABELA_QUANTITATIVOS.getRange( 'B6' ).setValue( mediaTempoEsperaTodosOsCasos.toFixed(2) );
+  TABELA_QUANTITATIVOS.getRange( 'B7' ).setValue( mediaTempoEsperaCasosInativos.toFixed(2) );
+  TABELA_QUANTITATIVOS.getRange( 'B8' ).setValue( mediaTempoEsperaCasosAtivos.toFixed(2) );
+   
+  PLANILHA_RELATORIO.waitForAllDataExecutionsCompletion(2);      
+  SpreadsheetApp.flush();  
+
+
+  console.log( "calcularQuantitativos - Fim" );
+
+   
+} // Fim da função calcularQuantitativos
+
+
+
+/**
  * Função que gera os relatórios de todos os casos da fila, 
  * e o retorna em excel
  */
@@ -211,16 +267,13 @@ function getRelatorioExel() {
   } catch( error ) {
     throw( "getRelatorioExel: " + error.message );
   }    
-  if( usuarioLogado.tipo != "2" && usuarioLogado.tipo != "0" ) {
-    throw( new Error( "Usuário sem permissão para gerar o relatório" ) );
-  }    
 
-
+  // Gera e retorna o relatório
   try {
 
     console.log( "getRelatorioExel - Início" );
     limparRelatorio();  
-    gerarRelatorio();
+    gerarRelatorio();    
     console.log( "getRelatorioExel - Fim" );
 
     return `https://docs.google.com/spreadsheets/d/${PLANILHA_RELATORIO_ID}/export?format=xlsx`;
