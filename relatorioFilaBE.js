@@ -227,8 +227,7 @@ function calcularQuantitativos( relatorio ) {
                                          });
   let dataCasoAtivoMaisAntigo = datasCasosAtivos.reduce( (maisAntiga, atual) => {
                                                           return atual < maisAntiga ? atual : maisAntiga;
-                                                       });   
-  //let dataFormatada = `${dataCasoAtivoMaisAntigo.getDate()}/${parseInt(dataCasoAtivoMaisAntigo.getMonth())+1}/${dataCasoAtivoMaisAntigo.getFullYear()} `; 
+                                                       });     
   let dataFormatada = new Date(dataCasoAtivoMaisAntigo).toLocaleString("pt-BR", {dateStyle: "short"}); 
    
    
