@@ -213,7 +213,7 @@ function calcularQuantitativos( relatorio ) {
   console.log( "calcularQuantitativos - Início" );  
 
   // Números de casos
-  let numTotalDeCasos  = NUM_CASOS;
+  let numTotalDeCasos  = relatorio.length;
   let numCasosAtivos   = relatorio.filter( caso => { return caso[15] == "NÃO DESIGNADO" } ).length;
   let numCasosInativos = numTotalDeCasos - numCasosAtivos;
    
@@ -228,7 +228,7 @@ function calcularQuantitativos( relatorio ) {
   let dataCasoAtivoMaisAntigo = datasCasosAtivos.reduce( (maisAntiga, atual) => {
                                                           return atual < maisAntiga ? atual : maisAntiga;
                                                        });   
-  let dataFormatada = `${dataCasoAtivoMaisAntigo.getDate()}/${parseInt(dataCasoAtivoMaisAntigo.getMonth())+1}/${dataCasoAtivoMaisAntigo.getFullYear()} `;  
+  let dataFormatada = `${dataCasoAtivoMaisAntigo.getDate()}/${parseInt(dataCasoAtivoMaisAntigo.getMonth())+1}/${dataCasoAtivoMaisAntigo.getFullYear()} `; 
    
    
   // Médias dos tempos de espera
