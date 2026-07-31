@@ -102,30 +102,30 @@
     <!-- Pesquisa caso - Fim -->           
 
 
-    <!-- Tabela com resumos dos Casos - Início -->
+    <!-- Tabela com Gráficos + Fila Resumos dos Casos - Início -->
     <section>
 
       <h3 class="text-center mt-5 mb-4" id="headerResumosDosCasos">RESUMOS DOS CASOS</h3>    
 
       <hr><br><h5 class="text-center mt-1 mb-1" id="totalizacaoResumosDosCasos"></h5>
 
-      <!-- Tabela com dados quantitativos - Designações dos Casos - Início -->
-      <!-- <h4 class="text-center fw-bold mt-5" id="headerQuantitativoDesignacoes">Quantitativo Designações de Casos</h4>  -->   
-      <div class="row mt-3" >        
-        <div class="col-md-6" id="plotQuantitativoMotivosDeDesignacao"></div>    
-        <div class="col-md-6" id="plotQuantitativoOrgaosEncaminhadores"></div>            
-      </div>    
-      <div class="row mt-3" >
-        <div class="col-md-6" id="plotQuantitativoCategorias"></div>    
-        <div class="col-md-6" id="plotQuantitativoViolacoes"></div>                
-      </div>
-      <div class="row mt-3" >
-        <div class="col-md-12" id="plotQuantitativoParametros"></div>    
-      </div>      
-      <!-- Tabela com dados quantitativos - Designações dos Casos - Fim -->                
-      
-      <hr><br>   
+      <!-- ABAS - INÍCIO -->
+      <ul id="abas" class="pagination">
+        <li class="page-item"><button class="page-link" style="display:none;"></button></li>
+        <li class="page-item">
+          <button class="page-link" id="abaFila" name="abas" onclick="mostrarFila()">Fila</button>
+        </li>
+        <li class="page-item">
+          <button class="page-link" id="abaGraficos" name="abas" onclick="mostrarGraficos()">Gráficos</button>
+        </li>
+        <li class="page-item"><button class="page-link" style="display:none;"></button></li>
+      </ul>
+      <hr style="color: blue;"> 
+      <!-- ABAS - FIM -->
 
+
+
+      <!-- FILA - INÍCIO -->
       <table id="resumosDosCasos" class="table table-striped table-hover text-center">    
 
         <thead>
@@ -144,9 +144,29 @@
         </tbody>    
 
       </table>
+      <!-- FILA - INÍCIO -->
+
+
+      <!-- GRÁFICOS - INÍCIO -->
+      <div id="graficos">
+        <div class="row mt-3" >        
+          <div class="col-md-6" id="plotQuantitativoMotivosDeDesignacao"></div>    
+          <div class="col-md-6" id="plotQuantitativoOrgaosEncaminhadores"></div>            
+        </div>    
+        <div class="row mt-3" >
+          <div class="col-md-6" id="plotQuantitativoCategorias"></div>    
+          <div class="col-md-6" id="plotQuantitativoViolacoes"></div>                
+        </div>
+        <div class="row mt-3" >
+          <div class="col-md-12" id="plotQuantitativoParametros"></div>    
+        </div>      
+      </div>       
+      <!-- GRÁFICOS - FIM -->        
+
 
     </section>  
-    <!-- Tabela com resumos dos Casos - Fim -->
+    <!-- Tabela com Gráficos + Fila Resumos dos Casos - Fim -->
+
     
   </main>  
   <!-- Main - Parte principal da tela de resumos dos casos - FIM -->  

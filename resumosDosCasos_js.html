@@ -96,6 +96,9 @@
     }); // Fim do tabelaResumoDosCasos.addEventListener    
 
 
+    // Mostra a aba com a fila de casos, inicialmente
+    mostrarFila();
+
   } // Fim da função configurarPaginaResumosDosCasos
 
 
@@ -202,6 +205,32 @@
     return designacaoSelect;
       
   } // Fim da função gerarSelectDesignacao 
+
+
+
+    /** 
+   * Funções para controlar qual aba será mostrada na tela
+  */
+
+  function mostrarFila() {
+
+    document.getElementById("resumosDosCasos").style.display = "table";     
+    document.getElementById("graficos").style.display = "none"; 
+
+    document.getElementById("abaFila").classList.add('active');
+    document.getElementById("abaGraficos").classList.remove('active');    
+  }  
+
+  function mostrarGraficos() {
+
+    document.getElementById("resumosDosCasos").style.display = "none";     
+    document.getElementById("graficos").style.display = ""; 
+
+    document.getElementById("abaFila").classList.remove('active');
+    document.getElementById("abaGraficos").classList.add('active');        
+  }    
+
+  // Fim das funções para controlar qual aba será mostrada na tela
 
 
 
