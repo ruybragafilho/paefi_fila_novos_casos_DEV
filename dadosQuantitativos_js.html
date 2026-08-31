@@ -142,18 +142,10 @@
       
       let orgaosEncaminhadoresCaso = caso.idsOrgaosEncaminhadores.split(";");
       let numOrgaosEncaminhadoresCaso = orgaosEncaminhadoresCaso.length; 
-
-      if( caso.id  ==  964 || caso.id  ==  985 || caso.id  ==  1066 || caso.id  ==  1096  ) {
-            console.log( `ID Caso: ${caso.id} - IDs Órgãos Encaminhadores: ${caso.idsOrgaosEncaminhadores}` );
-      }
       
       for( let i=0; i<numOrgaosEncaminhadoresCaso; ++i)  {
         if( orgaosEncaminhadoresCaso[i] != "" ) {
-          ++quantitativoOrgaosEncaminhadores[i];         
-          if( i==5 ) {
-            console.log( `ID Caso: ${caso.id} - ID Órgão Encaminhador: ${i}` );
-          }
-          
+          ++quantitativoOrgaosEncaminhadores[i];                   
         }          
       }
 
