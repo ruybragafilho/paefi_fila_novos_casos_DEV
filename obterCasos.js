@@ -21,7 +21,7 @@ function obterCasos() {
   } catch( error ) {
     throw( "obterCasos: " + error.message );
   }    
-  const idRegional = usuarioLogado.regional;
+  const idRegional = parseInt( usuarioLogado.regional );
 
 
   // Se id inválido, retorna uma exceção
@@ -36,7 +36,7 @@ function obterCasos() {
 
   // Aplica filtro para selecionar a regional apropriada  
   let casosFiltrados = [];
-  if( idRegional != "0" ) {
+  if( idRegional != 0 ) {
     casosFiltrados = BUFFER_CASOS.filter( linhaCaso => (linhaCaso[REGIONAL] == idRegional) );
   } else {
     casosFiltrados = BUFFER_CASOS;
@@ -129,7 +129,7 @@ function obterCasos() {
  */
 function teste_obterCasos() {
 
-  const casos = obterCasos( "6" );
+  const casos = obterCasos();
 
   console.log(casos);    
 

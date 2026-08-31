@@ -9,26 +9,26 @@
 
   // Array para armazenar os valores X e Y do gráfico
   let quantitativoMotivosDeDesignacao;
-  let labelMotivosDeDesignacao = [];
+  let labelMotivosDeDesignacao;
 
   // Arrays para armazenar os valores X e Y do gráfico Órgãos Encaminhadores
   let quantitativoOrgaosEncaminhadores;
-  let labelOrgaosEncaminhadores = [];
+  let labelOrgaosEncaminhadores;
   let numOrgaosEncaminhadores;
 
   // Arrays para armazenar os valores X e Y do gráfico Categorias
   let quantitativoCategorias;
-  let labelCategorias = [];
+  let labelCategorias;
   let numCategorias;
 
   // Arrays para armazenar os valores X e Y do gráfico Violações
   let quantitativoViolacoes;
-  let labelViolacoes = [];
+  let labelViolacoes;
   let numViolacoes;
 
   // Arrays para armazenar os valores X e Y do gráfico Parâmetros
   let quantitativoParametros;
-  let labelParametros = [];
+  let labelParametros;
   let numParametros;
 
 
@@ -77,6 +77,7 @@
     gerarQuantitativoMotivosDeDesignacao();
 
     // Gera os Labels do gráfico com os nomes dos motivos de designação
+    labelMotivosDeDesignacao = [];
     cache_TabelaMotivosDeDesignacao.forEach( sit_beneficio => {
       labelMotivosDeDesignacao.push( sit_beneficio[COLUNA_NOME] );  
     });
@@ -136,17 +137,23 @@
     // Inicializa os contadores de cada Órgão Encaminhador
     quantitativoOrgaosEncaminhadores = new Array( numOrgaosEncaminhadores ).fill( 0 );
 
-    // Referencia para o array de categorias de um caso
-    let orgaoEncaminhadorCaso = [];
-
     // Contabiliza a quantidade de categorias dos casos
     casosFiltrados.forEach( caso => {        
       
-      orgaoEncaminhadorCaso = caso.idsOrgaosEncaminhadores.split(";");
+      let orgaosEncaminhadoresCaso = caso.idsOrgaosEncaminhadores.split(";");
+      let numOrgaosEncaminhadoresCaso = orgaosEncaminhadoresCaso.length; 
 
-      for( let i=0; i<numOrgaosEncaminhadores; ++i)  {
-        if( orgaoEncaminhadorCaso[i] != "" ) {
-          ++quantitativoOrgaosEncaminhadores[i];
+      if( caso.id  ==  964 || caso.id  ==  985 || caso.id  ==  1066 || caso.id  ==  1096  ) {
+            console.log( `ID Caso: ${caso.id} - IDs Órgãos Encaminhadores: ${caso.idsOrgaosEncaminhadores}` );
+      }
+      
+      for( let i=0; i<numOrgaosEncaminhadoresCaso; ++i)  {
+        if( orgaosEncaminhadoresCaso[i] != "" ) {
+          ++quantitativoOrgaosEncaminhadores[i];         
+          if( i==5 ) {
+            console.log( `ID Caso: ${caso.id} - ID Órgão Encaminhador: ${i}` );
+          }
+          
         }          
       }
 
@@ -170,6 +177,7 @@
     gerarQuantitativoOrgaosEncaminhadores();
 
     // Gera os Labels do gráfico com os nomes dos Órgãos Encaminhadores
+    labelOrgaosEncaminhadores = [];
     cache_TabelaOrgaosEncaminhadores.forEach( orgaoEncaminhador => {
       labelOrgaosEncaminhadores.push( orgaoEncaminhador[COLUNA_NOME] );  
     });
@@ -228,15 +236,13 @@
     // Inicializa os contadores de cada categoria
     quantitativoCategorias = new Array( numCategorias ).fill( 0 );
 
-    // Referencia para o array de categorias de um caso
-    let categoriasCaso = [];
-
     // Contabiliza a quantidade de categorias dos casos
     casosFiltrados.forEach( caso => {        
       
-      categoriasCaso = caso.idsCategorias.split(";");
+      let categoriasCaso = caso.idsCategorias.split(";");
+      let numCategoriasCaso = categoriasCaso.length;
 
-      for( let i=0; i<numCategorias; ++i)  {
+      for( let i=0; i<numCategoriasCaso; ++i)  {
         if( categoriasCaso[i] != "" ) {
           ++quantitativoCategorias[i];
         }          
@@ -262,7 +268,8 @@
     gerarQuantitativoCategorias();
 
     // Gera os Labels do gráfico com os nomes das categorias
-    cache_TabelaCategorias.forEach( categoria => {
+    labelCategorias = [];
+    cache_TabelaCategorias.forEach( categoria => {      
       labelCategorias.push( categoria[COLUNA_NOME] );  
     });
 
@@ -320,17 +327,15 @@
     // Inicializa os contadores de cada violação
     quantitativoViolacoes = new Array( numViolacoes + 1 ).fill( 0 );
 
-    // Referencia para o array de violções de um caso
-    let violacoesCaso = [];
-
     // Contabiliza a quantidade de violações dos casos
     casosFiltrados.forEach( caso => {        
       
       if( caso.idsViolacoes != ";;;;;;;;;;" ) {
 
-        violacoesCaso = caso.idsViolacoes.split(";");
+        let violacoesCaso = caso.idsViolacoes.split(";");
+        let numViolacoesCaso = violacoesCaso.length;
   
-        for( let i=0; i<numViolacoes; ++i)  {
+        for( let i=0; i<numViolacoesCaso; ++i)  {
           if( violacoesCaso[i] != "" ) {
             ++quantitativoViolacoes[i];
           }                   
@@ -430,17 +435,15 @@
     // Inicializa os contadores de cada parâmetro
     quantitativoParametros = new Array( numParametros + 1 ).fill( 0 );
 
-    // Referencia para o array de parametros de um caso
-    let parametrosCaso = [];
-
     // Contabiliza a quantidade de parâmetros dos casos
     casosFiltrados.forEach( caso => {        
       
       if( caso.idsParametros != ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;" ) {
 
-        parametrosCaso = caso.idsParametros.split(";");
+        let parametrosCaso = caso.idsParametros.split(";");
+        let numParametrosCaso = parametrosCaso.length;
   
-        for( let i=0; i<numParametros; ++i)  {
+        for( let i=0; i<numParametrosCaso; ++i)  {
           if( parametrosCaso[i] != "" ) {
             ++quantitativoParametros[i];
           }          
