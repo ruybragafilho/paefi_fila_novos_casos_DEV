@@ -15,7 +15,7 @@
  *     . REGIONAIS
  *     . MOTIVOS_DE_DESIGNACAO  
  */
-const PLANILHA_CODIGOS_ID  =  "1fIIrASOpuoDJ5nx8jpScOj8-SlQqSawrnB9CuAOHhRY";
+const PLANILHA_CODIGOS_ID  =  PropertiesService.getScriptProperties().getProperty('PLANILHA_CODIGOS_ID');
 const PLANILHA_CODIGOS     =  SpreadsheetApp.openById(PLANILHA_CODIGOS_ID);
 
 const TABELA_VIOLACOES              =  PLANILHA_CODIGOS.getSheetByName('VIOLACOES');
@@ -44,7 +44,7 @@ const NUM_MOTIVOS_DE_DESIGNACAO  =  BUFFER_MOTIVOS_DE_DESIGNACAO.length;
 /**
  * Planilha CASOS
  */
-const PLANILHA_CASOS_ID         =  "1XFN7K2i-ZzB4Dogg06nMMOUpE2OgwaRgC5nZ9EWiDWk";
+const PLANILHA_CASOS_ID         =  PropertiesService.getScriptProperties().getProperty('PLANILHA_CASOS_ID');
 const PLANILHA_CASOS            =  SpreadsheetApp.openById(PLANILHA_CASOS_ID);
 const TABELA_CASOS              =  PLANILHA_CASOS.getSheetByName('CASOS');
 let BUFFER_CASOS                =  TABELA_CASOS.getDataRange().getDisplayValues().splice(1);
@@ -61,7 +61,7 @@ function refreshBufferCasos() {
 /**
  * Planilha USUARIOS
  */
-const PLANILHA_USUARIOS_ID  =  "1VTWjsXyTbA8NSD7f891CtN9Pv6OcAr-T19bL0u06o8A";
+const PLANILHA_USUARIOS_ID  =  PropertiesService.getScriptProperties().getProperty('PLANILHA_USUARIOS_ID');
 const PLANILHA_USUARIOS     =  SpreadsheetApp.openById(PLANILHA_USUARIOS_ID);
 const TABELA_USUARIOS       =  PLANILHA_USUARIOS.getSheetByName('USUARIOS');
 const BUFFER_USUARIOS       =  TABELA_USUARIOS.getDataRange().getDisplayValues().splice(1);
@@ -72,7 +72,7 @@ const NUM_USUARIOS          =  BUFFER_USUARIOS.length;
 /**
  * Planilha TECNICOS  
  */
-const PLANILHA_TECNICOS_ID  =  "1oq3et2iHIaodbPJKguIFsOEhosuaZdA1g3gcZcEnZT8";
+const PLANILHA_TECNICOS_ID  =  PropertiesService.getScriptProperties().getProperty('PLANILHA_TECNICOS_ID');
 const PLANILHA_TECNICOS     =  SpreadsheetApp.openById(PLANILHA_TECNICOS_ID);
 const TABELA_TECNICOS       =  PLANILHA_TECNICOS.getSheetByName('TECNICOS');
 const BUFFER_TECNICOS       =  TABELA_TECNICOS.getDataRange().getDisplayValues().splice(1);

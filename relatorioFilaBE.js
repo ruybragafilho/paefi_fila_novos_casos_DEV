@@ -1,7 +1,7 @@
 /**
  * Planilha RELATORIO
  */
-const PLANILHA_RELATORIO_ID     =  "1dKDF-AFro9pju-U97LfH6pw5bVsHH-6pvdUzXwq_Wtg";
+const PLANILHA_RELATORIO_ID     =  PropertiesService.getScriptProperties().getProperty('PLANILHA_RELATORIO_ID');
 const PLANILHA_RELATORIO        =  SpreadsheetApp.openById(PLANILHA_RELATORIO_ID);
 
 const TABELA_RELATORIO          =  PLANILHA_RELATORIO.getSheetByName('RELATORIO');
