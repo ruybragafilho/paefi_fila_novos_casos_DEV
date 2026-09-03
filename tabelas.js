@@ -536,24 +536,41 @@ function reprocessarCasos() {
  */
 function idsToNomes( stringIds, nomeTabela ) {
 
-  if(stringIds.trim() == "") return "";
+  // Validação de parâmetros da função
+  
+  if( !isStringValidBE(stringIds) ) {
+    return "";
+  } 
+
+  if( !isStringValidBE(nomeTabela) ) {
+    throw( new Error( "idToNome - Tabela Inválida" ) );    
+  }
+
 
   let bufferTabela;
+  let tamanhoTabela;    
 
   switch( nomeTabela ) {
     case "VIOLACOES":                bufferTabela = BUFFER_VIOLACOES;
+                                     tamanhoTabela = NUM_VIOLACOES;
                                      break;                                                                              
     case "CATEGORIAS":               bufferTabela = BUFFER_CATEGORIAS;
+                                     tamanhoTabela = NUM_CATEGORIAS;
                                      break;
     case "PARAMETROS":               bufferTabela = BUFFER_PARAMETROS;
+                                     tamanhoTabela = NUM_PARAMETROS;
                                      break;                                                        
     case "ORGAOS_ENCAMINHADORES":    bufferTabela = BUFFER_ORGAOS_ENCAMINHADORES;
+                                     tamanhoTabela = NUM_ORGAOS_ENCAMINHADORES;
                                      break;
     case "REGIONAIS":                bufferTabela = BUFFER_REGIONAIS;
+                                     tamanhoTabela = NUM_REGIONAIS;
                                      break;                           
     case "MOTIVOS_DE_DESIGNACAO":    bufferTabela = BUFFER_MOTIVOS_DE_DESIGNACAO;
+                                     tamanhoTabela = NUM_MOTIVOS_DE_DESIGNACAO;
                                      break;
     case "TECNICOS":                 bufferTabela = BUFFER_TECNICOS;
+                                     tamanhoTabela = NUM_TECNICOS;                                     
                                      break;                                                    
     default:                         throw( new Error( "Tabela Inválida" ) ); 
   }
@@ -562,8 +579,20 @@ function idsToNomes( stringIds, nomeTabela ) {
   let arrayNomes = [];
 
   arrayIDs.forEach( id => {
-    if( id ) arrayNomes.push( bufferTabela[id-1][NOME] );
-  } );
+
+    const idItem = parseInt(id);
+
+    if( isIntegerValidBE(idItem) ) {
+
+      // Se id está fora dos limites inferior ou superior, lança uma exceção
+      if( idItem < 1  ||  idItem > tamanhoTabela ) {
+        throw( new Error( "idToNome - ID fora do intervalo da tabela: " + idItem + " - " + tamanhoTabela ) );      
+      }  
+
+      arrayNomes.push( bufferTabela[idItem-1][NOME] );
+    }
+
+  });
 
   return arrayNomes.join(";");
 
