@@ -57,6 +57,6 @@ function escapeHtml(unsafe) {
 
 
 /**
- * ##### FIM DO MÓDULO isStringValidaBE.gs #####
+ * ##### FIM DO MÓDULO validacaoDadosBE.gs #####
  */
 

@@ -169,4 +169,80 @@
   } // Fim da função carregarTabelaNaCache
 
 
+
+  /**
+   * Função que recebe um string com ids separados por ponto e vírgula
+   * e e o nome da tabela a qual os ids se referem, e retorna um array 
+   * com os nomes referentes aos ids
+   * 
+   * @param {String} stringIds: string de ids separados por ponto e vírgula
+   *                            Exemplo: 1;;3;;5
+   * @param {String} nomeTabela: Nome da tabela a qual os ids se referem. Pode ser
+   *                             VIOLACOES, CATEGORIAS, PARAMETROS, ORGAOS_ENCAMINHADORES,
+   *                             REGIONAIS ou MOTIVOS_DE_DESIGNACAO
+   * 
+   * return String com os nomes relacionados aos ids, separados por ponto e vírgula
+   *        Exemplo: "Crianças e Adolescentes;PCD;Pessoas Adultas Vítimas de Violência"
+   */
+  function idsToNomesFE( stringIds, nomeTabela ) {
+  
+    // Validação de parâmetros da função
+    
+    if( !isStringValidFE(stringIds) ) {
+      return "";
+    } 
+  
+    if( !isStringValidFE(nomeTabela) ) {
+      throw( new Error( "idToNome - Tabela Inválida" ) );    
+    }
+  
+  
+    let bufferTabela;
+  
+    switch( nomeTabela ) {
+      case "VIOLACOES":                bufferTabela = cache_TabelaViolacoes;                                     
+                                       break;                                                                              
+      case "CATEGORIAS":               bufferTabela = cache_TabelaCategorias;                                     
+                                       break;
+      case "PARAMETROS":               bufferTabela = cache_TabelaParametros;                                     
+                                       break;                                                        
+      case "ORGAOS_ENCAMINHADORES":    bufferTabela = cache_TabelaOrgaosEncaminhadores;                                     
+                                       break;
+      case "REGIONAIS":                bufferTabela = cache_TabelaRegionais;                                     
+                                       break;                           
+      case "MOTIVOS_DE_DESIGNACAO":    bufferTabela = cache_TabelaMotivosDeDesignacao;                                     
+                                       break;
+  
+      default:                         throw( new Error( "Tabela Inválida" ) ); 
+    
+    }
+    
+    const tamanhoTabela = bufferTabela.length;
+  
+  
+    let arrayIDs = stringIds.split(";");
+    let arrayNomes = [];
+  
+  
+    arrayIDs.forEach( id => {
+  
+      const idItem = parseInt(id);
+  
+      if( isIntegerValidFE(idItem) ) {
+  
+        // Se id está fora dos limites inferior ou superior, lança uma exceção
+        if( idItem < 1  ||  idItem > tamanhoTabela ) {
+          throw( new Error( "idToNome - ID fora do intervalo da tabela: " + idItem + " - " + tamanhoTabela ) );      
+        }  
+  
+        arrayNomes.push( bufferTabela[idItem-1][COLUNA_NOME] );
+      }
+  
+    });
+  
+    return arrayNomes.join(";");
+  
+  } // Fim da função idsToNomesFE  
+
+
 </script>

@@ -145,7 +145,7 @@
       tr.innerHTML =           
        `<td class="clicavel align-middle">${item.posicaoNaFila}</td>
         <td class="clicavel align-middle">${item.referenciaFamiliar}</td>
-        <td class="clicavel align-middle">${item.nomesCategorias.replaceAll(";", "<br>")}</td>
+        <td class="clicavel align-middle">${idsToNomesFE(item.idsCategorias, "CATEGORIAS").replaceAll(";", "<br>")}</td>
         <td class="clicavel align-middle">${item.totalPontos}</td>        
         <td class="clicavel align-middle">${item.ativo}</td>
         <td class="clicavel align-middle">${item.dataPrevistaParaResposta}</td>
