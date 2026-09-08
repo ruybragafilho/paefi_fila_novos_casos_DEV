@@ -32,86 +32,121 @@
 
 
 
-  // #############  GRÁFICO MOTIVOS DE DESIGNAÇÃO  #############
+  /**
+   * Função que gera inicializa os labels dos gráficos
+   */
+  async function inicializarLabels() {
+
+    // Aguarda carregamento das tabelas na cache de tabelas
+    while( !tabelasCarregadasNaCache() ) {      
+      await esperar( 1000 );
+    }            
+
+    // Inicializa os labels
+    inicializarLabelsMotivosDeDesignacao();
+    inicializarLabelsOrgaosEncaminhadores();
+    inicializarLabelsCategorias();
+    inicializarLabelsViolacoes();
+    inicializarLabelsParametros();
+
+  } // Fim da função inicializarLabels
+
+  
 
   /**
    * Função que gera os quantitativos
    */
-  async function gerarQuantitativos() {
+  async function contabilizarDados() {
+
+    if( !abaGraficos ) return false;
 
     // Aguarda carregamento das tabelas na cache de tabelas
     while( !tabelasCarregadasNaCache() ) {      
       await esperar( 1000 );
     }            
 
-    // Inicializa os contadores de cada tipo de designação
+    // Inicializa os contadores
     numMotivosDeDesignacao = cache_TabelaMotivosDeDesignacao.length;
     quantitativoMotivosDeDesignacao = new Array( numMotivosDeDesignacao + 1 ).fill( 0 );
 
-    // Inicializa os contadores de cada Órgão Encaminhador    
     quantitativoOrgaosEncaminhadores = new Array( cache_TabelaOrgaosEncaminhadores.length ).fill( 0 );
 
-    // Inicializa os contadores de cada categoria
     quantitativoCategorias = new Array( cache_TabelaCategorias.length ).fill( 0 );    
 
-    // Inicializa os contadores de cada violação
     numViolacoes = cache_TabelaViolacoes.length;
     quantitativoViolacoes = new Array( numViolacoes + 1 ).fill( 0 );    
 
-    // Inicializa os contadores de cada parâmetro
     numParametros = cache_TabelaParametros.length;
     quantitativoParametros = new Array( numParametros + 1 ).fill( 0 );    
 
-  }
 
-
-  /**
-   * Função que contabiliza a quantidade de cada tipo de motivo de designação de casos
-   */
-  async function gerarQuantitativoMotivosDeDesignacao() {
-
-    // Aguarda carregamento das tabelas na cache de tabelas
-    while( !tabelasCarregadasNaCache() ) {      
-      await esperar( 1000 );
-    }            
-
-    // Inicializa os contadores de cada tipo de designação
-    numMotivosDeDesignacao = cache_TabelaMotivosDeDesignacao.length;
-    quantitativoMotivosDeDesignacao = new Array( numMotivosDeDesignacao + 1 ).fill( 0 );    
-
-    // Contabiliza a quantidade de casos em cada situação de benefício
-    casosFiltrados.forEach( caso => {        
-
-        if( caso.idMotivoDeDesignacao != "" ) {
-          ++(quantitativoMotivosDeDesignacao[ parseInt(caso.idMotivoDeDesignacao) - 1 ]);
-        } else {
-          ++(quantitativoMotivosDeDesignacao[ numMotivosDeDesignacao ]);  
-        }        
+    // Contabiliza a quantidade de casos em cada situação
+    casosFiltrados.forEach( caso => {   
+      contabilizarMotivosDeDesignacao( caso );
+      contabilizarOrgaosEncaminhadores( caso );
+      contabilizarCategorias( caso );
+      contabilizarViolacoes( caso );
+      contabilizarParametros( caso )
     });    
-
-  } // Fim da função gerarQuantitativoMotivosDeDesignacao
+  
+  } // Fim da função contabilizarDados
 
 
 
   /**
-   * Função que gera o gráfico de barras da quantidade de cada tipo de motivo de designação de casos
+   * Função que gera os gráficos
    */
-  async function gerarGraficoQuantitativoMotivosDeDesignacao() {
+  function gerarGraficos() {
 
-    // Aguarda carregamento das tabelas na cache de tabelas
-    while( !tabelasCarregadasNaCache() ) {
-      await esperar( 1000 );
-    }            
+    if( !abaGraficos ) return false;
 
-    // Chama a função para gerar o quantitativo de cada tipo de motivo de designação de casos
-    gerarQuantitativoMotivosDeDesignacao();
+    gerarGraficoMotivosDeDesignacao();
+    gerarGraficoOrgaosEncaminhadores();
+    gerarGraficoCategorias();
+    gerarGraficoViolacoes();
+    gerarGraficoParametros();
+
+  } // Fim da função gerarGraficos
+
+
+
+
+// #############  MOTIVOS DE DESIGNAÇÃO  #############
+
+
+  /**
+   * Função que gera inicializa os labels do gráfico Motivos de Designação
+   */
+  function inicializarLabelsMotivosDeDesignacao() {
 
     // Gera os Labels do gráfico com os nomes dos motivos de designação
     labelMotivosDeDesignacao = [];
     cache_TabelaMotivosDeDesignacao.forEach( sit_beneficio => {
       labelMotivosDeDesignacao.push( sit_beneficio[COLUNA_NOME] );  
     });
-    labelMotivosDeDesignacao.push( "NÃO DESIGNADO" );
+    labelMotivosDeDesignacao.push( "NÃO DESIGNADO" );  
+
+  } // Fim da função inicializarLabelsMotivosDeDesignacao
+
+
+  /**
+   * Função que contabiliza a quantidade de cada tipo de motivo de designação do caso
+   */
+  function contabilizarMotivosDeDesignacao( caso ) {
+   
+    if( caso.idMotivoDeDesignacao != "" ) {
+      ++(quantitativoMotivosDeDesignacao[ parseInt(caso.idMotivoDeDesignacao) - 1 ]);
+    } else {
+      ++(quantitativoMotivosDeDesignacao[ numMotivosDeDesignacao ]);  
+    }            
+
+  } // Fim da função contabilizarMotivosDeDesignacao
+
+
+  /**
+   * Função que gera o gráfico de barras da quantidade de cada tipo de motivo de designação de casos
+   */
+  function gerarGraficoMotivosDeDesignacao() {
 
     // Gera o gráfico usando a biblioteca plotly.js
     const grafico = document.getElementById( "plotQuantitativoMotivosDeDesignacao" );    
@@ -144,7 +179,7 @@
     
     Plotly.newPlot(grafico, data, layout, config);
 
-  } // Fim da função gerarGraficoQuantitativoMotivosDeDesignacao 
+  } // Fim da função gerarGraficoMotivosDeDesignacao 
 
 
 
@@ -152,54 +187,40 @@
 
 
   /**
-   * Função que contabiliza a quantidade de Órgãos Encaminhadores
+   * Função que gera inicializa os labels do gráfico Orgaos Encaminhadores
    */
-  async function gerarQuantitativoOrgaosEncaminhadores() {
-
-    // Aguarda carregamento das tabelas na cache de tabelas
-    while( !tabelasCarregadasNaCache() ) {      
-      await esperar( 1000 );
-    }            
-
-    // Inicializa os contadores de cada Órgão Encaminhador
-    quantitativoOrgaosEncaminhadores = new Array( cache_TabelaOrgaosEncaminhadores.length ).fill( 0 );
-
-    // Contabiliza a quantidade de categorias dos casos
-    casosFiltrados.forEach( caso => {        
-      
-      let orgaosEncaminhadoresCaso = caso.idsOrgaosEncaminhadores.split(";");
-      let numOrgaosEncaminhadoresCaso = orgaosEncaminhadoresCaso.length; 
-      
-      for( let i=0; i<numOrgaosEncaminhadoresCaso; ++i)  {
-        if( orgaosEncaminhadoresCaso[i] != "" ) {
-          ++quantitativoOrgaosEncaminhadores[i];                   
-        }          
-      }
-
-    })    
-
-  } // Fim da função gerarQuantitativoOrgaosEncaminhadores
-
-
-
-  /**
-   * Função que gera o gráfico de barras da quantidade de Órgãos Encaminhadores
-   */
-  async function gerarGraficoQuantitativoOrgaosEncaminhadores() {
-
-    // Aguarda carregamento das tabelas na cache de tabelas
-    while( !tabelasCarregadasNaCache() ) {
-      await esperar( 1000 );
-    }            
-
-    // Chama a função para gerar o quantitativo de Órgãos Encaminhadores
-    gerarQuantitativoOrgaosEncaminhadores();
+  function inicializarLabelsOrgaosEncaminhadores() {
 
     // Gera os Labels do gráfico com os nomes dos Órgãos Encaminhadores
     labelOrgaosEncaminhadores = [];
     cache_TabelaOrgaosEncaminhadores.forEach( orgaoEncaminhador => {
       labelOrgaosEncaminhadores.push( orgaoEncaminhador[COLUNA_NOME] );  
     });
+
+  } // Fim da função inicializarLabelsOrgaosEncaminhadores
+
+
+  /**
+   * Função que contabiliza a quantidade de Órgãos Encaminhadores do caso
+   */
+  function contabilizarOrgaosEncaminhadores( caso ) {
+
+    let orgaosEncaminhadoresCaso = caso.idsOrgaosEncaminhadores.split(";");
+    let numOrgaosEncaminhadoresCaso = orgaosEncaminhadoresCaso.length; 
+    
+    for( let i=0; i<numOrgaosEncaminhadoresCaso; ++i)  {
+      if( orgaosEncaminhadoresCaso[i] != "" ) {
+        ++quantitativoOrgaosEncaminhadores[i];                   
+      }          
+    }
+
+  } // Fim da função contabilizarOrgaosEncaminhadores
+
+
+  /**
+   * Função que gera o gráfico de barras da quantidade de Órgãos Encaminhadores
+   */
+  function gerarGraficoOrgaosEncaminhadores() {
 
     // Gera o gráfico usando a biblioteca plotly.js
     const grafico = document.getElementById( "plotQuantitativoOrgaosEncaminhadores" );    
@@ -232,7 +253,7 @@
     
     Plotly.newPlot(grafico, data, layout, config);
 
-  } // Fim da função gerarGraficoQuantitativoOrgaosEncaminhadores   
+  } // Fim da função gerarGraficoOrgaosEncaminhadores   
 
 
 
@@ -240,54 +261,40 @@
 
 
   /**
-   * Função que contabiliza a quantidade de Categorias dos casos
+   * Função que gera inicializa os labels do gráfico Categorias
    */
-  async function gerarQuantitativoCategorias() {
-
-    // Aguarda carregamento das tabelas na cache de tabelas
-    while( !tabelasCarregadasNaCache() ) {      
-      await esperar( 1000 );
-    }            
-
-    // Inicializa os contadores de cada categoria
-    quantitativoCategorias = new Array( cache_TabelaCategorias.length ).fill( 0 );
-
-    // Contabiliza a quantidade de categorias dos casos
-    casosFiltrados.forEach( caso => {        
-      
-      let categoriasCaso = caso.idsCategorias.split(";");
-      let numCategoriasCaso = categoriasCaso.length;
-
-      for( let i=0; i<numCategoriasCaso; ++i)  {
-        if( categoriasCaso[i] != "" ) {
-          ++quantitativoCategorias[i];
-        }          
-      }
-
-    });    
-
-  } // Fim da função gerarQuantitativoCategorias
-
-
-
-  /**
-   * Função que gera o gráfico de barras da quantidade de categorias dos casos
-   */
-  async function gerarGraficoQuantitativoCategorias() {
-
-    // Aguarda carregamento das tabelas na cache de tabelas
-    while( !tabelasCarregadasNaCache() ) {
-      await esperar( 1000 );
-    }            
-
-    // Chama a função para gerar o quantitativo de categorias dos casos
-    gerarQuantitativoCategorias();
+  function inicializarLabelsCategorias() {
 
     // Gera os Labels do gráfico com os nomes das categorias
     labelCategorias = [];
     cache_TabelaCategorias.forEach( categoria => {      
       labelCategorias.push( categoria[COLUNA_NOME] );  
     });
+
+  } // Fim da função inicializarLabelsCategorias  
+
+
+  /**
+   * Função que contabiliza a quantidade de Categorias do caso
+   */
+  function contabilizarCategorias( caso ) {
+
+    let categoriasCaso = caso.idsCategorias.split(";");
+    let numCategoriasCaso = categoriasCaso.length;
+
+    for( let i=0; i<numCategoriasCaso; ++i)  {
+      if( categoriasCaso[i] != "" ) {
+        ++quantitativoCategorias[i];
+      }          
+    }
+
+  } // Fim da função contabilizarCategorias
+
+
+  /**
+   * Função que gera o gráfico de barras da quantidade de categorias dos casos
+   */
+  function gerarGraficoCategorias() {
 
     // Gera o gráfico usando a biblioteca plotly.js
     const grafico = document.getElementById( "plotQuantitativoCategorias" );    
@@ -320,7 +327,7 @@
     
     Plotly.newPlot(grafico, data, layout, config);
 
-  } // Fim da função gerarGraficoQuantitativoCategorias   
+  } // Fim da função gerarGraficoCategorias   
 
 
 
@@ -328,55 +335,9 @@
 
 
   /**
-   * Função que contabiliza a quantidade de Violações dos casos
+   * Função que gera inicializa os labels do gráfico Violacoes
    */
-  async function gerarQuantitativoViolacoes() {
-
-    // Aguarda carregamento das tabelas na cache de tabelas
-    while( !tabelasCarregadasNaCache() ) {      
-      await esperar( 1000 );
-    }            
-
-    // Inicializa os contadores de cada violação
-    numViolacoes = cache_TabelaViolacoes.length;
-    quantitativoViolacoes = new Array( numViolacoes + 1 ).fill( 0 );        
-
-    // Contabiliza a quantidade de violações dos casos
-    casosFiltrados.forEach( caso => {        
-      
-      if( caso.idsViolacoes != ";;;;;;;;;;" ) {
-
-        let violacoesCaso = caso.idsViolacoes.split(";");
-        let numViolacoesCaso = violacoesCaso.length;
-  
-        for( let i=0; i<numViolacoesCaso; ++i)  {
-          if( violacoesCaso[i] != "" ) {
-            ++quantitativoViolacoes[i];
-          }                   
-        }
-
-      } else {
-        ++quantitativoViolacoes[numViolacoes];
-      }
-
-    });    
-
-  } // Fim da função gerarQuantitativoViolacoes
-
-
-
-  /**
-   * Função que gera o gráfico de barras da quantidade de Violações dos casos
-   */
-  async function gerarGraficoQuantitativoViolacoes() {
-
-    // Aguarda carregamento das tabelas na cache de tabelas
-    while( !tabelasCarregadasNaCache() ) {
-      await esperar( 1000 );
-    }            
-
-    // Chama a função para gerar o quantitativo de violações dos casos
-    gerarQuantitativoViolacoes();
+  function inicializarLabelsViolacoes() {
 
     // Gera os Labels do gráfico com os nomes resumidos das violações
     labelViolacoes = [
@@ -394,6 +355,34 @@
       "VIOLAÇÕES NÃO INFORMADAS"      
     ];
 
+  } // Fim da função inicializarLabelsViolacoes  
+
+
+  /**
+   * Função que contabiliza a quantidade de Violações do caso
+   */
+  function contabilizarViolacoes( caso ) {
+      
+    if( caso.idsViolacoes != ";;;;;;;;;;" ) {
+      let violacoesCaso = caso.idsViolacoes.split(";");
+      let numViolacoesCaso = violacoesCaso.length;
+
+      for( let i=0; i<numViolacoesCaso; ++i)  {
+        if( violacoesCaso[i] != "" ) {
+          ++quantitativoViolacoes[i];
+        }                   
+      }
+    } else {
+      ++quantitativoViolacoes[numViolacoes];
+    }
+
+  } // Fim da função contabilizarViolacoes
+
+
+  /**
+   * Função que gera o gráfico de barras da quantidade de Violações dos casos
+   */
+  function gerarGraficoViolacoes() {
 
     // Gera o gráfico usando a biblioteca plotly.js
     const grafico = document.getElementById( "plotQuantitativoViolacoes" );    
@@ -426,63 +415,17 @@
     
     Plotly.newPlot(grafico, data, layout, config);
 
-  } // Fim da função gerarGraficoQuantitativoViolacoes   
+  } // Fim da função gerarGraficoViolacoes   
 
 
 
   // #############  GRÁFICO PARÂMETROS  #############  
 
-
-  /**
-   * Função que contabiliza a quantidade de Parâmetros dos casos
-   */
-  async function gerarQuantitativoParametros() {
-
-    // Aguarda carregamento das tabelas na cache de tabelas
-    while( !tabelasCarregadasNaCache() ) {      
-      await esperar( 1000 );
-    }            
-
-    // Inicializa os contadores de cada parâmetro
-    numParametros = cache_TabelaParametros.length;
-    quantitativoParametros = new Array( numParametros + 1 ).fill( 0 );        
-
-    // Contabiliza a quantidade de parâmetros dos casos
-    casosFiltrados.forEach( caso => {        
-      
-      if( caso.idsParametros != ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;" ) {
-
-        let parametrosCaso = caso.idsParametros.split(";");
-        let numParametrosCaso = parametrosCaso.length;
   
-        for( let i=0; i<numParametrosCaso; ++i)  {
-          if( parametrosCaso[i] != "" ) {
-            ++quantitativoParametros[i];
-          }          
-        }
-
-      } else {
-        ++quantitativoParametros[numParametros];
-      }
-
-    });    
-
-  } // Fim da função gerarQuantitativoParametros
-
-
-
   /**
-   * Função que gera o gráfico de barras da quantidade de parâmetros dos casos
+   * Função que gera inicializa os labels do gráfico Parametro
    */
-  async function gerarGraficoQuantitativoParametros() {
-
-    // Aguarda carregamento das tabelas na cache de tabelas
-    while( !tabelasCarregadasNaCache() ) {
-      await esperar( 1000 );
-    }            
-
-    // Chama a função para gerar o quantitativo de parâmetros dos casos
-    gerarQuantitativoParametros();
+  function inicializarLabelsParametros() {
 
     // Gera os Labels do gráfico com os nomes dos parâmetros
     labelParametros = [
@@ -528,6 +471,34 @@
       "PARÂMETROS NÃO INFORMADOS"
     ];
 
+  } // Fim da função inicializarLabelsParametros
+
+
+  /**
+   * Função que contabiliza a quantidade de Parâmetros do caso
+   */
+  function contabilizarParametros( caso ) {
+      
+    if( caso.idsParametros != ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;" ) {
+      let parametrosCaso = caso.idsParametros.split(";");
+      let numParametrosCaso = parametrosCaso.length;
+
+      for( let i=0; i<numParametrosCaso; ++i)  {
+        if( parametrosCaso[i] != "" ) {
+          ++quantitativoParametros[i];
+        }          
+      }
+    } else {
+      ++quantitativoParametros[numParametros];
+    }
+
+  } // Fim da função contabilizarParametros
+
+
+  /**
+   * Função que gera o gráfico de barras da quantidade de parâmetros dos casos
+   */
+  function gerarGraficoParametros() {
 
     // Filtra apenas os parâmetros ativos
     let quantitativoParametrosAtivos = [];
@@ -581,7 +552,7 @@
     
     Plotly.newPlot(grafico, data, layout, config);
 
-  } // Fim da função gerarGraficoQuantitativoParametros   
+  } // Fim da função gerarGraficoParametros   
   
 
 </script>

@@ -3,6 +3,11 @@
   "use strict";
 
 
+  let abaFila = false;
+  let abaGraficos = false;
+
+
+
   /**
    * Função que configura a página de resumos dos casos
    */
@@ -95,10 +100,6 @@
         
     }); // Fim do tabelaResumoDosCasos.addEventListener    
 
-
-    // Mostra a aba com a fila de casos, inicialmente
-    mostrarFila();
-
   } // Fim da função configurarPaginaResumosDosCasos
 
 
@@ -109,6 +110,8 @@
    * @param {Array} tabelaCasos - Tabela com os casos
    */
   function gerarTabelaResumosCasos( tabelaCasos ) {
+
+    if( !abaFila ) return false;
 
     // Se tabela vazia, mostra mensagem TABELA VAZIA e sai da função
     if( !tabelaCasos ) {
@@ -155,9 +158,6 @@
       tbody.appendChild(tr);
 
     }); // Fim do dados.forEach
-
-    // Mostra o total de casos
-    document.getElementById('totalizacaoResumosDosCasos').innerHTML = `TOTAL DE CASOS: ${tabelaCasos.length}`;
 
   } // Fim da função gerarTabelaResumosCasos      
 
@@ -208,27 +208,41 @@
 
 
 
-    /** 
+  /** 
    * Funções para controlar qual aba será mostrada na tela
   */
 
   function mostrarFila() {
+
+    abaFila = true;
+    abaGraficos = false;
 
     document.getElementById("resumosDosCasos").style.display = "table";     
     document.getElementById("graficos").style.display = "none"; 
 
     document.getElementById("abaFila").classList.add('active');
     document.getElementById("abaGraficos").classList.remove('active');    
-  }  
 
-  function mostrarGraficos() {
+    filtrar();
+
+  } // Fim da função mostrarFila 
+
+
+  async function mostrarGraficos() {
+
+    abaFila = false;
+    abaGraficos = true;    
 
     document.getElementById("resumosDosCasos").style.display = "none";     
     document.getElementById("graficos").style.display = ""; 
 
     document.getElementById("abaFila").classList.remove('active');
-    document.getElementById("abaGraficos").classList.add('active');        
-  }    
+    document.getElementById("abaGraficos").classList.add('active');       
+    
+    filtrar();
+
+  } // Fim da função   function mostrarGraficos() {
+     
 
   // Fim das funções para controlar qual aba será mostrada na tela
 
@@ -296,16 +310,20 @@
     let nomeRFPesquisado = document.getElementById("inputTextPesquisaCaso").value.trim().toUpperCase();      
     let casosPesquisados = casosFiltrados.filter( caso => { return caso.referenciaFamiliar.trim().toUpperCase().includes( nomeRFPesquisado ) } ) ;        
 
+    // Mostra o total de casos
+    document.getElementById('totalizacaoResumosDosCasos').innerHTML = `TOTAL DE CASOS: ${casosPesquisados.length}`;
 
-    // Gera a tabela de casos filtrados
-    gerarTabelaResumosCasos( casosPesquisados );
 
-    // Gera os gráficos
-    gerarGraficoQuantitativoMotivosDeDesignacao();    
-    gerarGraficoQuantitativoOrgaosEncaminhadores();
-    gerarGraficoQuantitativoCategorias();
-    gerarGraficoQuantitativoViolacoes();
-    gerarGraficoQuantitativoParametros();
+    if( abaFila ) {
+      console.log(  "** ABA FILA **"  );
+      gerarTabelaResumosCasos( casosPesquisados );      
+    } else if( abaGraficos ) {
+      console.log(  "** ABA GRÁFICOS **"  );
+      contabilizarDados();
+      gerarGraficos();
+    } else {
+      console.log(  "** ABA NULL **"  );      
+    }
 
   } // Fim da função filtrar
 
