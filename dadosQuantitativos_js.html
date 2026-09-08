@@ -10,16 +10,15 @@
   // Array para armazenar os valores X e Y do gráfico
   let quantitativoMotivosDeDesignacao;
   let labelMotivosDeDesignacao;
+  let numMotivosDeDesignacao;
 
   // Arrays para armazenar os valores X e Y do gráfico Órgãos Encaminhadores
   let quantitativoOrgaosEncaminhadores;
   let labelOrgaosEncaminhadores;
-  let numOrgaosEncaminhadores;
 
   // Arrays para armazenar os valores X e Y do gráfico Categorias
   let quantitativoCategorias;
   let labelCategorias;
-  let numCategorias;
 
   // Arrays para armazenar os valores X e Y do gráfico Violações
   let quantitativoViolacoes;
@@ -35,6 +34,36 @@
 
   // #############  GRÁFICO MOTIVOS DE DESIGNAÇÃO  #############
 
+  /**
+   * Função que gera os quantitativos
+   */
+  async function gerarQuantitativos() {
+
+    // Aguarda carregamento das tabelas na cache de tabelas
+    while( !tabelasCarregadasNaCache() ) {      
+      await esperar( 1000 );
+    }            
+
+    // Inicializa os contadores de cada tipo de designação
+    numMotivosDeDesignacao = cache_TabelaMotivosDeDesignacao.length;
+    quantitativoMotivosDeDesignacao = new Array( numMotivosDeDesignacao + 1 ).fill( 0 );
+
+    // Inicializa os contadores de cada Órgão Encaminhador    
+    quantitativoOrgaosEncaminhadores = new Array( cache_TabelaOrgaosEncaminhadores.length ).fill( 0 );
+
+    // Inicializa os contadores de cada categoria
+    quantitativoCategorias = new Array( cache_TabelaCategorias.length ).fill( 0 );    
+
+    // Inicializa os contadores de cada violação
+    numViolacoes = cache_TabelaViolacoes.length;
+    quantitativoViolacoes = new Array( numViolacoes + 1 ).fill( 0 );    
+
+    // Inicializa os contadores de cada parâmetro
+    numParametros = cache_TabelaParametros.length;
+    quantitativoParametros = new Array( numParametros + 1 ).fill( 0 );    
+
+  }
+
 
   /**
    * Função que contabiliza a quantidade de cada tipo de motivo de designação de casos
@@ -47,7 +76,8 @@
     }            
 
     // Inicializa os contadores de cada tipo de designação
-    quantitativoMotivosDeDesignacao = new Array( cache_TabelaMotivosDeDesignacao.length + 1 ).fill( 0 );
+    numMotivosDeDesignacao = cache_TabelaMotivosDeDesignacao.length;
+    quantitativoMotivosDeDesignacao = new Array( numMotivosDeDesignacao + 1 ).fill( 0 );    
 
     // Contabiliza a quantidade de casos em cada situação de benefício
     casosFiltrados.forEach( caso => {        
@@ -55,7 +85,7 @@
         if( caso.idMotivoDeDesignacao != "" ) {
           ++(quantitativoMotivosDeDesignacao[ parseInt(caso.idMotivoDeDesignacao) - 1 ]);
         } else {
-          ++(quantitativoMotivosDeDesignacao[ quantitativoMotivosDeDesignacao.length - 1 ]);  
+          ++(quantitativoMotivosDeDesignacao[ numMotivosDeDesignacao ]);  
         }        
     });    
 
@@ -131,11 +161,8 @@
       await esperar( 1000 );
     }            
 
-    // Número de Órgãos Encaminhadores
-    numOrgaosEncaminhadores = cache_TabelaOrgaosEncaminhadores.length;
-
     // Inicializa os contadores de cada Órgão Encaminhador
-    quantitativoOrgaosEncaminhadores = new Array( numOrgaosEncaminhadores ).fill( 0 );
+    quantitativoOrgaosEncaminhadores = new Array( cache_TabelaOrgaosEncaminhadores.length ).fill( 0 );
 
     // Contabiliza a quantidade de categorias dos casos
     casosFiltrados.forEach( caso => {        
@@ -222,11 +249,8 @@
       await esperar( 1000 );
     }            
 
-    // Número de categorias
-    numCategorias = cache_TabelaCategorias.length;
-
     // Inicializa os contadores de cada categoria
-    quantitativoCategorias = new Array( numCategorias ).fill( 0 );
+    quantitativoCategorias = new Array( cache_TabelaCategorias.length ).fill( 0 );
 
     // Contabiliza a quantidade de categorias dos casos
     casosFiltrados.forEach( caso => {        
@@ -313,11 +337,9 @@
       await esperar( 1000 );
     }            
 
-    // Número de violações
-    numViolacoes = cache_TabelaViolacoes.length;
-
     // Inicializa os contadores de cada violação
-    quantitativoViolacoes = new Array( numViolacoes + 1 ).fill( 0 );
+    numViolacoes = cache_TabelaViolacoes.length;
+    quantitativoViolacoes = new Array( numViolacoes + 1 ).fill( 0 );        
 
     // Contabiliza a quantidade de violações dos casos
     casosFiltrados.forEach( caso => {        
@@ -421,11 +443,9 @@
       await esperar( 1000 );
     }            
 
-    // Número de parâmetros
-    numParametros = cache_TabelaParametros.length;
-
     // Inicializa os contadores de cada parâmetro
-    quantitativoParametros = new Array( numParametros + 1 ).fill( 0 );
+    numParametros = cache_TabelaParametros.length;
+    quantitativoParametros = new Array( numParametros + 1 ).fill( 0 );        
 
     // Contabiliza a quantidade de parâmetros dos casos
     casosFiltrados.forEach( caso => {        

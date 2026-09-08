@@ -166,16 +166,17 @@
     // coloca o caso em cache, para poder ser utilizado se
     // o usuário do sistema clicar no botão Editar Caso
     cache_CasoEmAtualizacao = caso;
-  
+
+    // Obtém os parâmetros do caso
+    const listaParametros = idsToNomesFE(caso.idsParametros, "PARAMETROS");
+    const parametros = listaParametros != "" ? listaParametros.split(";") : [];
+
     // Se não houver opções selecionadas, mostra mensagem padrão
-    if( caso.nomesParametros == "" ) {  
+    if( parametros.length == 0 ) {  
 
       conteudoModalParametrosCaso.innerHTML = "<p>Nenhum parâmetro selecionado.</p>";
 
     } else {     
-      
-      // Obtém os parâmetros do caso
-      const parametros = caso.nomesParametros.split(";");
   
       // Modal onde será exibida a lista de opções      
       conteudoModalParametrosCaso.innerHTML = ""; // Limpa conteúdo      

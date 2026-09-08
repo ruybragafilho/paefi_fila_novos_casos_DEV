@@ -73,7 +73,6 @@ function obterCaso( id ) {
         nomesViolacoes: idsToNomes(linhaCaso[VIOLACOES_CASO], "VIOLACOES"),
   
         idsCategorias: linhaCaso[CATEGORIAS_CASO],
-        nomesCategorias: idsToNomes(linhaCaso[CATEGORIAS_CASO], "CATEGORIAS"),
         
         idsParametros: linhaCaso[PARAMETROS_CASO],
         nomesParametros: idsToNomes( linhaCaso[PARAMETROS_CASO], "PARAMETROS" ),

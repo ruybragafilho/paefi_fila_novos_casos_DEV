@@ -66,7 +66,7 @@
       document.getElementById('selectRegionais').value = cache_CasoEmAtualizacao.idRegional;
     } else {
       document.getElementById('selectRegionais').innerHTML = 
-      `<option selected value="${cache_CasoEmAtualizacao.idRegional}">${cache_CasoEmAtualizacao.nomeRegional}</option>`;
+      `<option selected value="${cache_CasoEmAtualizacao.idRegional}">${idsToNomesFE(cache_CasoEmAtualizacao.idRegional, "REGIONAIS")}</option>`;      
     }                                     
 
     document.getElementById('cepInput').value = cache_CasoEmAtualizacao.cep;
@@ -107,7 +107,7 @@
       document.getElementById( "dataDesignacaoInput" ).value = `${data[2]}-${data[1]}-${data[0]}`;
 
       document.getElementById( "selectMotivoDesiginacao" ).innerHTML = 
-      `<option selected value="${cache_CasoEmAtualizacao.idMotivoDeDesignacao}">${cache_CasoEmAtualizacao.nomeMotivoDeDesignacao}</option>`;
+      `<option selected value="${cache_CasoEmAtualizacao.idMotivoDeDesignacao}">${idsToNomesFE(cache_CasoEmAtualizacao.idMotivoDeDesignacao, "MOTIVOS_DE_DESIGNACAO")}</option>`;      
       
       if( cache_CasoEmAtualizacao.idMotivoDeDesignacao == "4" ) {
 

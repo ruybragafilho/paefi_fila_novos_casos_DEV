@@ -57,37 +57,26 @@ function obterCasos() {
         complemento: linhaCaso[COMPLEMENTO], 
         bairro: linhaCaso[BAIRRO],
         idRegional: linhaCaso[REGIONAL],
-        nomeRegional: idsToNomes(linhaCaso[REGIONAL], "REGIONAIS"),
         cep: linhaCaso[CEP],
         tpsa: linhaCaso[TPSA],
   
-        dataDeChegadaNoCREAS: linhaCaso[DATA_DE_CHEGADA_NO_CREAS],
-  
-        idsOrgaosEncaminhadores: linhaCaso[ORGAOS_ENCAMINHADORES],
-        nomesOrgaosEncaminhadores: idsToNomes(linhaCaso[ORGAOS_ENCAMINHADORES], "ORGAOS_ENCAMINHADORES"),
-  
+        dataDeChegadaNoCREAS: linhaCaso[DATA_DE_CHEGADA_NO_CREAS],  
+        idsOrgaosEncaminhadores: linhaCaso[ORGAOS_ENCAMINHADORES],  
         dataPrevistaParaResposta: linhaCaso[DATA_PREVISTA_PARA_RESPOSTA],
         dataDaUltimaResposta: linhaCaso[DATA_DA_ULTIMA_RESPOSTA],
-  
+
         dataDeDesignacao: linhaCaso[DATA_DE_DESIGNACAO],
         ativo: (linhaCaso[DATA_DE_DESIGNACAO]).trim()? "Não" : "Sim",
         idMotivoDeDesignacao: linhaCaso[MOTIVO_DE_DESIGNACAO],
-        nomeMotivoDeDesignacao: idsToNomes(linhaCaso[MOTIVO_DE_DESIGNACAO], "MOTIVOS_DE_DESIGNACAO"),
         idTecnicoPAEFI: linhaCaso[ID_TECNICO_PAEFI],
         nomeTecnicoPAEFI: idsToNomes(linhaCaso[ID_TECNICO_PAEFI], "TECNICOS"),
   
-        totalPontos: linhaCaso[TOTAL_DE_PONTOS],
-  
+        totalPontos: linhaCaso[TOTAL_DE_PONTOS],  
         tempoDeEspera: linhaCaso[TEMPO_DE_ESPERA],
 
-        idsViolacoes: linhaCaso[VIOLACOES_CASO],
-        nomesViolacoes: idsToNomes(linhaCaso[VIOLACOES_CASO], "VIOLACOES"),        
-  
-        idsCategorias: linhaCaso[CATEGORIAS_CASO],
-        nomesCategorias: idsToNomes(linhaCaso[CATEGORIAS_CASO], "CATEGORIAS"),
-        
+        idsViolacoes: linhaCaso[VIOLACOES_CASO],  
+        idsCategorias: linhaCaso[CATEGORIAS_CASO],        
         idsParametros: linhaCaso[PARAMETROS_CASO],
-        nomesParametros: idsToNomes( linhaCaso[PARAMETROS_CASO], "PARAMETROS" ),
 
         observacao: linhaCaso[OBSERVACAO]
   

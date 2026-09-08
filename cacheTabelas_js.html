@@ -221,26 +221,30 @@
   
   
     let arrayIDs = stringIds.split(";");
-    let arrayNomes = [];
-  
-  
+    let arrayNomes = [];  
+    let idItem;
+
     arrayIDs.forEach( id => {
+
+      if( isStringValidFE(id) ) {
+
+        idItem = parseInt(id);
+    
+        if( isIntegerValidFE(idItem) ) {
+    
+          // Se id está fora dos limites inferior ou superior, lança uma exceção
+          if( idItem < 1  ||  idItem > tamanhoTabela ) {
+            throw( new Error( "idToNome - ID fora do intervalo da tabela: " + idItem + " - " + tamanhoTabela ) );      
+          }  
+    
+          arrayNomes.push( bufferTabela[idItem-1][COLUNA_NOME] );
+        }        
+
+      } // Fim if
   
-      const idItem = parseInt(id);
-  
-      if( isIntegerValidFE(idItem) ) {
-  
-        // Se id está fora dos limites inferior ou superior, lança uma exceção
-        if( idItem < 1  ||  idItem > tamanhoTabela ) {
-          throw( new Error( "idToNome - ID fora do intervalo da tabela: " + idItem + " - " + tamanhoTabela ) );      
-        }  
-  
-        arrayNomes.push( bufferTabela[idItem-1][COLUNA_NOME] );
-      }
-  
-    });
-  
-    return arrayNomes.join(";");
+    }); // Fim forEach
+
+    return arrayNomes.length > 0 ? arrayNomes.join(";") : "";
   
   } // Fim da função idsToNomesFE  
 
