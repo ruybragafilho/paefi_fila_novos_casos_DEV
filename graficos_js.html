@@ -30,12 +30,18 @@
   let labelParametros;
   let numParametros;
 
+  // Flags
+  let flagLabelsInicializados = false;
+  let flagDadosContabilizados = false;
+
 
 
   /**
    * Função que gera inicializa os labels dos gráficos
    */
   async function inicializarLabels() {
+
+    flagLabelsInicializados = false;
 
     // Aguarda carregamento das tabelas na cache de tabelas
     while( !tabelasCarregadasNaCache() ) {      
@@ -49,6 +55,8 @@
     inicializarLabelsViolacoes();
     inicializarLabelsParametros();
 
+    flagLabelsInicializados = true;
+
   } // Fim da função inicializarLabels
 
   
@@ -58,7 +66,7 @@
    */
   async function contabilizarDados() {
 
-    if( !abaGraficos ) return false;
+    flagDadosContabilizados = false;
 
     // Aguarda carregamento das tabelas na cache de tabelas
     while( !tabelasCarregadasNaCache() ) {      
@@ -88,6 +96,8 @@
       contabilizarViolacoes( caso );
       contabilizarParametros( caso )
     });    
+
+    flagDadosContabilizados = true;
   
   } // Fim da função contabilizarDados
 
@@ -96,9 +106,12 @@
   /**
    * Função que gera os gráficos
    */
-  function gerarGraficos() {
+  async function gerarGraficos() {
 
-    if( !abaGraficos ) return false;
+    // Aguarda contabilização do dados
+    while( !flagDadosContabilizados || !flagLabelsInicializados ) {      
+      await esperar( 1000 );
+    }                
 
     gerarGraficoMotivosDeDesignacao();
     gerarGraficoOrgaosEncaminhadores();
@@ -536,6 +549,7 @@
     const layout = {
       title: { text: "<b>Parâmetros</b>" },            
       height: 900, // Altura total  
+      width: 1200, // Largura total
       xaxis: {
         automargin: true
       },      
